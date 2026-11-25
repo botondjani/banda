@@ -1,4 +1,3 @@
-import { ArrowRight } from 'lucide-react'
 import { useState } from 'react'
 import { useSession } from '../../core/auth/auth'
 import { useMembers } from '../../core/groups/api'
@@ -69,12 +68,8 @@ export function MoneyPage() {
               {plan.map((t) => (
                 <ListRow
                   key={`${t.from_user}-${t.to_user}`}
-                  title={
-                    <span className="flex items-center gap-1.5">
-                      {name(t.from_user)} <ArrowRight size={16} strokeWidth={1.75} className="text-muted" /> {name(t.to_user)}
-                    </span>
-                  }
-                  meta={formatFt(t.amount)}
+                  title={<span className="font-display text-lg tabular-nums">{formatFt(t.amount)}</span>}
+                  meta={`${name(t.from_user)} → ${name(t.to_user)}`}
                   value={
                     (uid === t.from_user || uid === t.to_user) && (
                       <Button

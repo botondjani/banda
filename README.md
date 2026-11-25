@@ -15,3 +15,7 @@ A Supabase publikus kulcsok a `.env`-ben vannak (publishable, commitolható).
 ## Supabase Auth
 Authentication → URL Configuration: Site URL = `https://botondjani.github.io/banda/`,
 Redirect URLs: `https://botondjani.github.io/banda/**`, `http://localhost:5173/banda/**`.
+
+## Tesztek
+`supabase/tests/*.sql`: SQL unit + integrációs tesztek. Egy SQL-hívásban futtasd (SQL editor / MCP);
+siker esetén `... TESTS PASSED` kivétellel végződik, és minden visszagörgetődik.
