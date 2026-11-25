@@ -35,7 +35,7 @@ export function NewBetSheet({ open, onOpenChange }: SheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange} title="Fogadjunk, hogy…">
       <form onSubmit={submit} className="flex flex-col gap-4">
-        <Input label="…" placeholder="Zoli megint elkésik" maxLength={120} required value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Input label="Mire fogadunk?" placeholder="Zoli megint elkésik" maxLength={120} required value={title} onChange={(e) => setTitle(e.target.value)} />
         <div className="flex gap-3">
           <Input label="Egyik oldal" maxLength={40} required value={a} onChange={(e) => setA(e.target.value)} />
           <Input label="Másik oldal" maxLength={40} required value={b} onChange={(e) => setB(e.target.value)} />
