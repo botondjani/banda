@@ -51,6 +51,15 @@ export type Database = {
           { foreignKeyName: 'availability_pings_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
         ]
       }
+      bring_items: {
+        Row: { claimed_by: string | null; created_at: string; created_by: string; done: boolean; group_id: string; id: string; kind: string; name: string; program_id: string; qty: string | null }
+        Insert: { claimed_by?: string | null; created_at?: string; created_by?: string; done?: boolean; group_id: string; id?: string; kind: string; name: string; program_id: string; qty?: string | null }
+        Update: { claimed_by?: string | null; created_at?: string; created_by?: string; done?: boolean; group_id?: string; id?: string; kind?: string; name?: string; program_id?: string; qty?: string | null }
+        Relationships: [
+          { foreignKeyName: 'bring_items_claimed_by_fkey'; columns: ['claimed_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+          { foreignKeyName: 'bring_items_created_by_fkey'; columns: ['created_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
       comments: {
         Row: { activity_id: string; body: string; created_at: string; id: string; user_id: string }
         Insert: { activity_id: string; body: string; created_at?: string; id?: string; user_id?: string }

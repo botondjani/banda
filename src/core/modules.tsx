@@ -16,6 +16,8 @@ export type ModuleManifest = {
   feed?: Record<string, ComponentType<{ item: FeedItem }>>
   // a feed tetején, a címsor alatt
   FeedTop?: ComponentType
+  // a program oldalán megjelenő szekció
+  ProgramSection?: ComponentType<{ programId: string }>
   quickAction?: { label: string; meta: string; icon: LucideIcon; Sheet: ComponentType<SheetProps> }
   notificationTypes?: { type: string; label: string }[]
 }

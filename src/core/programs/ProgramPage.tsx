@@ -6,6 +6,7 @@ import { Card } from '../../ui/Card'
 import { ListRow } from '../../ui/ListRow'
 import { Segmented } from '../../ui/Segmented'
 import { useSession } from '../auth/auth'
+import { useEnabledModules } from '../modules'
 import { useProgram, useSetAttendance, type Attendance } from './api'
 
 const labels: Record<Attendance, string> = { going: 'Megyek', maybe: 'Talán', no: 'Nem' }
@@ -15,6 +16,7 @@ export function ProgramPage() {
   const uid = useSession()?.user.id
   const { data: program, isError } = useProgram(id)
   const setAttendance = useSetAttendance(id)
+  const sections = useEnabledModules().filter((m) => m.ProgramSection)
 
   if (isError) return <p className="text-muted">Ez a program nem létezik, vagy nem a te bandádé.</p>
   if (!program) return null
@@ -59,6 +61,8 @@ export function ProgramPage() {
           )}
         </Card>
       </section>
+
+      {sections.map(({ id: moduleId, ProgramSection }) => ProgramSection && <ProgramSection key={moduleId} programId={program.id} />)}
     </div>
   )
 }
