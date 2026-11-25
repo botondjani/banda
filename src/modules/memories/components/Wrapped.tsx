@@ -62,12 +62,11 @@ export function Wrapped({ year, onClose }: { year: number; onClose: () => void }
       <div className="flex gap-1 px-4 pt-[max(1rem,env(safe-area-inset-top))]">
         {list.map((_, n) => (
           <span key={n} className="h-1 flex-1 overflow-hidden rounded-full bg-white/20">
-            <motion.span
-              className="block h-full bg-[#FF6B42]"
-              initial={{ width: n < i ? '100%' : '0%' }}
-              animate={{ width: n < i ? '100%' : n === i ? '100%' : '0%' }}
-              transition={{ duration: n === i && !last ? SLIDE_MS / 1000 : 0, ease: 'linear' }}
-            />
+            {n < i || (n === i && last) ? (
+              <span className="block h-full bg-[#FF6B42]" />
+            ) : n === i ? (
+              <motion.span key={i} className="block h-full bg-[#FF6B42]" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: SLIDE_MS / 1000, ease: 'linear' }} />
+            ) : null}
           </span>
         ))}
       </div>
