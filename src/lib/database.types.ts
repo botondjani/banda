@@ -330,6 +330,15 @@ export type Database = {
         Update: { module_id?: string; type?: string; points?: number; daily_cap?: number | null }
         Relationships: []
       }
+      photos: {
+        Row: { created_at: string; group_id: string; id: string; path: string; program_id: string; size_bytes: number; taken_at: string | null; uploaded_by: string }
+        Insert: { created_at?: string; group_id: string; id?: string; path: string; program_id: string; size_bytes: number; taken_at?: string | null; uploaded_by?: string }
+        Update: { created_at?: string; group_id?: string; id?: string; path?: string; program_id?: string; size_bytes?: number; taken_at?: string | null; uploaded_by?: string }
+        Relationships: [
+          { foreignKeyName: 'photos_program_id_fkey'; columns: ['program_id']; isOneToOne: false; referencedRelation: 'programs'; referencedColumns: ['id'] },
+          { foreignKeyName: 'photos_uploaded_by_fkey'; columns: ['uploaded_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
     }
     Views: {
       balances: {
@@ -372,6 +381,7 @@ export type Database = {
       save_push_subscription: { Args: { auth: string; endpoint: string; p256dh: string }; Returns: undefined }
       settle_plan: { Args: { gid: string }; Returns: { amount: number; from_user: string; to_user: string }[] }
       shares_group: { Args: { uid: string }; Returns: boolean }
+      wrapped: { Args: { gid: string; yr: number }; Returns: Json }
     }
     Enums: { [_ in never]: never }
     CompositeTypes: { [_ in never]: never }
