@@ -69,6 +69,14 @@ export type Database = {
           { foreignKeyName: 'comments_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
         ]
       }
+      draws: {
+        Row: { created_at: string; created_by: string; group_id: string; id: string; kind: string; options: Json; result: Json }
+        Insert: { created_at?: string; created_by?: string; group_id: string; id?: string; kind: string; options?: Json; result: Json }
+        Update: { created_at?: string; created_by?: string; group_id?: string; id?: string; kind?: string; options?: Json; result?: Json }
+        Relationships: [
+          { foreignKeyName: 'draws_created_by_fkey'; columns: ['created_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
       expense_splits: {
         Row: { amount: number; expense_id: string; user_id: string }
         Insert: { amount: number; expense_id: string; user_id: string }
@@ -231,6 +239,7 @@ export type Database = {
         Returns: string
       }
       create_group: { Args: { group_name: string }; Returns: string }
+      draw: { Args: { gid: string; kind: string; options?: Json }; Returns: string }
       is_group_member: { Args: { gid: string }; Returns: boolean }
       is_group_owner: { Args: { gid: string }; Returns: boolean }
       join_group: { Args: { code: string }; Returns: string }
