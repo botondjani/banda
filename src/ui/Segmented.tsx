@@ -1,3 +1,5 @@
+import { haptic } from '../lib/haptics'
+
 type Props<T extends string> = {
   options: { value: T; label: string }[]
   value: T | undefined
@@ -14,7 +16,10 @@ export function Segmented<T extends string>({ options, value, onChange }: Props<
           type="button"
           role="radio"
           aria-checked={o.value === value}
-          onClick={() => onChange(o.value)}
+          onClick={() => {
+            if (o.value !== value) haptic()
+            onChange(o.value)
+          }}
           className="min-h-10 flex-1 rounded-full text-sm font-semibold text-muted transition-colors duration-150 aria-checked:bg-ink aria-checked:text-paper"
         >
           {o.label}

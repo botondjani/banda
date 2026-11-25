@@ -1,4 +1,5 @@
 import { useSearchParams, useNavigate } from 'react-router'
+import { useGoBack } from '../../lib/nav'
 import { useGroup } from '../../core/groups/GroupProvider'
 import { usePrograms } from '../../core/programs/api'
 import { formatDateTime } from '../../lib/format'
@@ -8,6 +9,7 @@ import { EmptyState } from '../../ui/EmptyState'
 import { ListRow } from '../../ui/ListRow'
 import { useAlbums } from './api'
 import { Wrapped } from './components/Wrapped'
+import { SkeletonList } from '../../ui/Skeleton'
 
 // Decemberben az idei, januárban a tavalyi Wrapped érhető el (linkkel bármikor: ?wrapped=ÉV)
 function wrappedYear(now = new Date()) {
@@ -30,6 +32,7 @@ export function MemoriesPage() {
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
   const open = params.get('wrapped')
+  const closeWrapped = useGoBack('/m/memories')
   const year = wrappedYear()
   const yearAgo = programs.filter((p) => sameDayLastYear(p.starts_at))
 
@@ -55,6 +58,7 @@ export function MemoriesPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-bold">Albumok</h2>
+        {!albums && <SkeletonList rows={2} avatar={false} />}
         {albums?.length === 0 && <EmptyState text="Még egy fotó sincs. Vagy nem történt semmi, vagy mindenki elfelejtett fotózni." />}
         {albums && albums.length > 0 && (
           <Card className="py-0">
@@ -71,7 +75,7 @@ export function MemoriesPage() {
         )}
       </section>
 
-      {open && <Wrapped year={Number(open)} onClose={() => setParams({})} />}
+      {open && <Wrapped year={Number(open)} onClose={closeWrapped} />}
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, Trash2, X } from 'lucide-react'
 import { useSession } from '../../../core/auth/auth'
+import { useBackClose } from '../../../ui/useBackClose'
 import { useDeletePhoto, type Photo } from '../api'
 
 type Props = { photos: Photo[]; index: number; programId: string; onIndex: (i: number | null) => void }
@@ -8,6 +9,7 @@ type Props = { photos: Photo[]; index: number; programId: string; onIndex: (i: n
 export function PhotoViewer({ photos, index, programId, onIndex }: Props) {
   const uid = useSession()!.user.id
   const remove = useDeletePhoto(programId)
+  useBackClose(true, () => onIndex(null))
   const photo = photos[index]
   if (!photo) return null
   const go = (d: number) => onIndex((index + d + photos.length) % photos.length)

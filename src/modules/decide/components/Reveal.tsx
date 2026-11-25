@@ -50,7 +50,7 @@ function Coin({ side }: { side: string }) {
         transition={{ duration: reduced ? 0 : 1.6, ease: [0.2, 0.7, 0.3, 1] }}
         onAnimationComplete={() => setLanded(true)}
       >
-        <div className={`${face} bg-accent text-white`}>FEJ</div>
+        <div className={`${face} bg-accent text-on-accent`}>FEJ</div>
         <div className={`${face} bg-ink text-paper [transform:rotateY(180deg)]`}>ÍRÁS</div>
       </motion.div>
     </div>

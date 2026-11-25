@@ -4,6 +4,7 @@ import { Button } from '../../ui/Button'
 import { Input } from '../../ui/Input'
 import { Sheet } from '../../ui/Sheet'
 import { toast } from '../../ui/Toast'
+import { afterOverlayClose } from '../../ui/useBackClose'
 import { useGroup } from '../groups/GroupProvider'
 import { useCreateProgram } from './api'
 
@@ -30,7 +31,7 @@ export function NewProgramSheet({ open, onOpenChange, defaultStartsAt = '' }: Pr
       setStartsAt('')
       setLocation('')
       onOpenChange(false)
-      navigate(`/programs/${id}`)
+      afterOverlayClose(() => navigate(`/programs/${id}`))
     } catch {
       toast.error('Nem sikerült menteni.')
     }

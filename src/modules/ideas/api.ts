@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { emitActivity } from '../../core/feed/api'
+import { patchCache } from '../../lib/optimistic'
 import { supabase } from '../../lib/supabase'
 
 export type Vote = 'in' | 'pass'
@@ -69,11 +70,18 @@ export function useAddIdea(groupId: string, uid: string) {
 export function useVote(groupId: string, uid: string) {
   const qc = useQueryClient()
   return useMutation({
+    // a kártya azonnal továbblép
+    onMutate: async ({ ideaId, vote }: { ideaId: string; vote: Vote }) => ({
+      rollback: await patchCache<Idea[]>(qc, ['ideas', groupId], (ideas) =>
+        ideas.map((i) => (i.id !== ideaId ? i : { ...i, idea_votes: [...i.idea_votes.filter((v) => v.user_id !== uid), { user_id: uid, vote }] })),
+      ),
+    }),
+    onError: (_e, _v, ctx) => ctx?.rollback(),
     mutationFn: async ({ ideaId, vote }: { ideaId: string; vote: Vote }) => {
       const { error } = await supabase.from('idea_votes').upsert({ program_id: ideaId, user_id: uid, group_id: groupId, vote })
       if (error) throw error
     },
     // küszöbnél program lesz belőle -> programlista, feed is frissül
-    onSuccess: () => qc.invalidateQueries(),
+    onSettled: () => qc.invalidateQueries(),
   })
 }

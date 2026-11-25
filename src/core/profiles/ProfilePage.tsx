@@ -15,6 +15,7 @@ import { NewGroupForm } from '../groups/NewGroupForm'
 import { NotificationSettings } from '../notifications/NotificationSettings'
 import { XpSummary } from '../xp/XpSummary'
 import { uploadAvatar, useMyProfile, useUpdateProfile } from './api'
+import { SkeletonList } from '../../ui/Skeleton'
 
 export function ProfilePage() {
   const session = useSession()
@@ -27,7 +28,7 @@ export function ProfilePage() {
   const [uploading, setUploading] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
 
-  if (!profile || !session) return null
+  if (!profile || !session) return <SkeletonList rows={3} />
   const displayName = name ?? profile.display_name
 
   function saveName(e: FormEvent) {
@@ -104,7 +105,7 @@ export function ProfilePage() {
             <ListRow
               key={g.id}
               title={g.name}
-              value={g.id === group.id ? <Check size={20} strokeWidth={1.75} className="text-accent" /> : undefined}
+              value={g.id === group.id ? <Check size={20} strokeWidth={1.75} className="text-accent-text" /> : undefined}
               onClick={() => setGroupId(g.id)}
             />
           ))}

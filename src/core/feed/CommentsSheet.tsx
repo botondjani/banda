@@ -51,7 +51,7 @@ export function CommentsSheet({ activityId, open, onOpenChange }: Props) {
             type="submit"
             aria-label="Küldés"
             disabled={!body.trim() || add.isPending}
-            className="flex size-11 items-center justify-center rounded-full bg-accent text-white disabled:opacity-50"
+            className="flex size-11 items-center justify-center rounded-full bg-accent text-on-accent disabled:opacity-50"
           >
             <SendHorizontal size={20} strokeWidth={1.75} />
           </button>

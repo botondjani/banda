@@ -8,6 +8,7 @@ import { ListRow } from '../../ui/ListRow'
 import { useGroup } from '../groups/GroupProvider'
 import { usePrograms } from './api'
 import { NewProgramSheet } from './NewProgramSheet'
+import { SkeletonList } from '../../ui/Skeleton'
 
 function DateBlock({ iso }: { iso: string | null }) {
   const d = iso ? new Date(iso) : null
@@ -47,6 +48,7 @@ export function ProgramsPage() {
         {upcoming.length > 0 && <Button variant="secondary" onClick={() => setOpen(true)}>Új</Button>}
       </div>
 
+      {!programs && <SkeletonList rows={4} />}
       {programs && upcoming.length === 0 && (
         <EmptyState text="Senki nem szervez semmit. Megint." action={<Button onClick={() => setOpen(true)}>Szervezek valamit</Button>} />
       )}

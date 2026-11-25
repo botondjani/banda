@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Drawer } from 'vaul'
+import { useBackClose } from './useBackClose'
 
 type Props = {
   open: boolean
@@ -9,6 +10,7 @@ type Props = {
 }
 
 export function Sheet({ open, onOpenChange, title, children }: Props) {
+  useBackClose(open, () => onOpenChange(false))
   return (
     <Drawer.Root open={open} onOpenChange={onOpenChange}>
       <Drawer.Portal>

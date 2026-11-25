@@ -1,6 +1,7 @@
 import '@fontsource-variable/bricolage-grotesque'
 import '@fontsource-variable/manrope'
 import './index.css'
+import './core/pwa/install'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './app/App'

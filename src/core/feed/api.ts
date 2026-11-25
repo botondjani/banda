@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { Json } from '../../lib/database.types'
+import { patchCache } from '../../lib/optimistic'
 import { supabase } from '../../lib/supabase'
+import { useSession } from '../auth/auth'
 
 type Activity = {
   groupId: string
@@ -57,14 +59,27 @@ export type FeedItem = NonNullable<ReturnType<typeof useFeed>['data']>[number]
 
 export function useToggleReaction(groupId: string) {
   const qc = useQueryClient()
+  const uid = useSession()?.user.id ?? ''
+  type Feed = NonNullable<ReturnType<typeof useFeed>['data']>
   return useMutation({
+    onMutate: async ({ activityId, emoji, active }: { activityId: string; emoji: string; active: boolean }) => ({
+      rollback: await patchCache<Feed>(qc, ['feed', groupId], (feed) =>
+        feed.map((i) =>
+          i.id !== activityId ? i : {
+            ...i,
+            reactions: active ? i.reactions.filter((r) => !(r.emoji === emoji && r.user_id === uid)) : [...i.reactions, { emoji, user_id: uid }],
+          },
+        ),
+      ),
+    }),
+    onError: (_e, _v, ctx) => ctx?.rollback(),
     mutationFn: async ({ activityId, emoji, active }: { activityId: string; emoji: string; active: boolean }) => {
       const { error } = active
         ? await supabase.from('reactions').delete().match({ activity_id: activityId, emoji })
         : await supabase.from('reactions').insert({ activity_id: activityId, emoji })
       if (error) throw error
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['feed', groupId] }),
+    onSettled: () => qc.invalidateQueries({ queryKey: ['feed', groupId] }),
   })
 }
 

@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router'
+import { useGoBack } from '../../lib/nav'
 import { useGroup } from '../../core/groups/GroupProvider'
 import { timeAgo } from '../../lib/format'
 import { Card } from '../../ui/Card'
@@ -14,7 +15,8 @@ export function DecidePage() {
   const kind = params.get('mode') as Kind | null
   const setKind = (k: Kind | null) => setParams(k ? { mode: k } : {})
 
-  if (kind) return <DecideMode key={kind} kind={kind} onBack={() => setKind(null)} />
+  const goBack = useGoBack('/m/decide')
+  if (kind) return <DecideMode key={kind} kind={kind} onBack={goBack} />
 
   return (
     <div className="flex flex-col gap-6">

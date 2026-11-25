@@ -13,7 +13,7 @@ export function ListRow({ leading, title, meta, value, onClick }: Props) {
   return (
     <Tag
       onClick={onClick}
-      className="flex w-full items-center gap-3 border-b border-line py-3 text-left last:border-b-0"
+      className={`flex w-full items-center gap-3 border-b border-line py-3 text-left last:border-b-0 ${onClick ? 'transition-opacity duration-150 ease-out active:opacity-60' : ''}`}
     >
       {leading}
       <span className="flex min-w-0 flex-1 flex-col">

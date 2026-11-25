@@ -8,8 +8,12 @@
   --muted: #6e675e;
   --line: #e4ddd2;
   --accent: #ff5b2e;
-  --positive: #2f9e62;
-  --negative: #d6453d;
+  /* narancs szöveg/ikon/vékony jelölő: AA kontraszt papíron és felületen */
+  --accent-text: #c83e14;
+  /* szöveg/ikon narancs kitöltésen (mindkét módban sötét) */
+  --on-accent: #191714;
+  --positive: #237a4b;
+  --negative: #c53a32;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,6 +24,7 @@
     --muted: #9a9287;
     --line: #2e2b27;
     --accent: #ff6b42;
+    --accent-text: #ff6b42;
     --positive: #3db876;
     --negative: #e5594f;
   }
@@ -32,6 +37,8 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-on-accent: var(--on-accent);
   --color-positive: var(--positive);
   --color-negative: var(--negative);
   --font-sans: 'Manrope Variable', sans-serif;
@@ -39,11 +46,27 @@
   --radius-card: 14px;
 }
 
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
 body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  /* app-érzet: nincs "gumis" túlgörgetés és véletlen pull-to-refresh */
+  overscroll-behavior-y: none;
+}
+
+/* gyors érintés (nincs dupla-koppintásos zoom-késleltetés), nincs szövegkijelölés gombokon */
+button, a, [role='button'], [role='tab'], [role='switch'], [role='radio'] {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 h1, h2, h3 {

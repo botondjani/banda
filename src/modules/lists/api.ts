@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { emitActivity } from '../../core/feed/api'
+import { patchCache } from '../../lib/optimistic'
 import { supabase } from '../../lib/supabase'
 
 export function useLists(groupId: string) {
@@ -85,15 +86,25 @@ export function useDeleteListItem(listId: string) {
 }
 
 // done=false: jelölés törlése; különben láttam (+ opcionális értékelés)
-export function useSetMark(item: ListItem, uid: string) {
+export function useSetMark(item: ListItem, uid: string, myName = '') {
   const qc = useQueryClient()
   return useMutation({
+    onMutate: async ({ done, rating = null }: { done: boolean; rating?: number | null }) => ({
+      rollback: await patchCache<ListItem[]>(qc, ['list_items', item.list_id], (items) =>
+        items.map((i) => {
+          if (i.id !== item.id) return i
+          const others = i.list_marks.filter((m) => m.user_id !== uid)
+          return { ...i, list_marks: done ? [...others, { user_id: uid, rating, user: { display_name: myName } }] : others }
+        }),
+      ),
+    }),
+    onError: (_e, _v, ctx) => ctx?.rollback(),
     mutationFn: async ({ done, rating = null }: { done: boolean; rating?: number | null }) => {
       const { error } = done
         ? await supabase.from('list_marks').upsert({ item_id: item.id, user_id: uid, group_id: item.group_id, rating })
         : await supabase.from('list_marks').delete().match({ item_id: item.id, user_id: uid })
       if (error) throw error
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['list_items', item.list_id] }),
+    onSettled: () => qc.invalidateQueries({ queryKey: ['list_items', item.list_id] }),
   })
 }

@@ -17,6 +17,7 @@ export function Avatar({ name, color, src, size = 'md' }: Props) {
   const initials = name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase()
   return (
     <span
+      role="img"
       className={`inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-bold text-[#191714] ${sizes[size]}`}
       style={{ background: USER_COLORS[color % USER_COLORS.length] }}
       aria-label={name}

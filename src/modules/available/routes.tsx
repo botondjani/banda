@@ -8,6 +8,7 @@ import { ListRow } from '../../ui/ListRow'
 import { useActivePings } from './api'
 import { PingAction } from './components/PingAction'
 import { PingSheet } from './components/PingSheet'
+import { SkeletonList } from '../../ui/Skeleton'
 
 export function AvailablePage() {
   const { group } = useGroup()
@@ -17,6 +18,7 @@ export function AvailablePage() {
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-3xl font-bold">Ráérek most</h1>
+      {!pings && <SkeletonList rows={2} />}
       {pings?.length === 0 && <EmptyState text="Ma még senki nem ér rá. Légy te az első." />}
       {pings && pings.length > 0 && (
         <Card className="py-0">

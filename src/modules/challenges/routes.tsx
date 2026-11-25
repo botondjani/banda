@@ -10,6 +10,7 @@ import { Sheet } from '../../ui/Sheet'
 import { toast } from '../../ui/Toast'
 import { useChallenges, useCreateChallenge } from './api'
 import { ChallengeCard } from './components/ChallengeCard'
+import { SkeletonList } from '../../ui/Skeleton'
 
 export function ChallengesPage() {
   const { group } = useGroup()
@@ -42,6 +43,7 @@ export function ChallengesPage() {
         <h1 className="text-3xl font-bold">Kihívások</h1>
         <p className="mt-1 text-muted">Fotó vagy nem történt meg. A többiek döntik el, hogy ér-e.</p>
       </div>
+      {!challenges && <SkeletonList rows={2} avatar={false} />}
       {challenges && active.length === 0 && <EmptyState text="Nincs futó kihívás. Unalmas hét lesz." />}
       {active.map((c) => (
         <ChallengeCard key={c.id} c={c} />

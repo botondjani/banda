@@ -6,11 +6,13 @@ import { Card } from '../../ui/Card'
 import { ListRow } from '../../ui/ListRow'
 import { Tabs } from '../../ui/Tabs'
 import { Awards } from './components/Awards'
+import { SkeletonList } from '../../ui/Skeleton'
 
 function Standings({ field }: { field: 'season_xp' | 'total_xp' }) {
   const { group } = useGroup()
-  const { data: rows = [] } = useStandings(group.id)
+  const { data: rows } = useStandings(group.id)
   const { data: members = [] } = useMembers(group.id)
+  if (!rows) return <SkeletonList rows={3} />
   const sorted = [...rows].sort((a, b) => b[field] - a[field])
   return (
     <Card className="py-0">

@@ -5,7 +5,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 }
 
 const variants = {
-  primary: 'bg-accent text-white',
+  primary: 'bg-accent text-on-accent',
   secondary: 'border border-line bg-surface text-ink',
 }
 

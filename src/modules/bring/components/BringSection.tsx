@@ -2,6 +2,8 @@ import { Check, X } from 'lucide-react'
 import { useState } from 'react'
 import { useSession } from '../../../core/auth/auth'
 import { useGroup } from '../../../core/groups/GroupProvider'
+import { useMyProfile } from '../../../core/profiles/api'
+import { haptic } from '../../../lib/haptics'
 import { Avatar } from '../../../ui/Avatar'
 import { Button } from '../../../ui/Button'
 import { Card } from '../../../ui/Card'
@@ -13,7 +15,7 @@ import { KIND_LABELS } from './labels'
 
 function ItemRow({ item, programId }: { item: BringItem; programId: string }) {
   const uid = useSession()?.user.id
-  const update = useUpdateItem(programId)
+  const update = useUpdateItem(programId, useMyProfile().data)
   const remove = useDeleteItem(programId)
   const mine = item.claimed_by === uid
   const small = 'min-h-9 px-4 text-sm'
@@ -24,8 +26,11 @@ function ItemRow({ item, programId }: { item: BringItem; programId: string }) {
         aria-label={item.done ? 'Megvan – visszavonás' : 'Megvan'}
         aria-pressed={item.done}
         disabled={!mine}
-        onClick={() => update.mutate({ id: item.id, done: !item.done })}
-        className={`flex size-7 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-150 ${item.done ? 'border-positive bg-positive text-white' : 'border-line'} disabled:opacity-60`}
+        onClick={() => {
+          haptic()
+          update.mutate({ id: item.id, done: !item.done })
+        }}
+        className={`flex size-7 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-150 ${item.done ? 'border-positive bg-positive text-paper' : 'border-line'} disabled:opacity-60`}
       >
         {item.done && <Check size={16} strokeWidth={2.5} />}
       </button>

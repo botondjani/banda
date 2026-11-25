@@ -2,6 +2,7 @@ import { Bell, MessageCircle, SmilePlus } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { formatDateTime, timeAgo } from '../../lib/format'
+import { haptic } from '../../lib/haptics'
 import { Avatar } from '../../ui/Avatar'
 import { EmptyState } from '../../ui/EmptyState'
 import { Button } from '../../ui/Button'
@@ -12,6 +13,8 @@ import { useEnabledModules } from '../modules'
 import { useNotifications } from '../notifications/api'
 import { NewProgramSheet } from '../programs/NewProgramSheet'
 import { CommentsSheet } from './CommentsSheet'
+import { SkeletonList } from '../../ui/Skeleton'
+import { InstallBanner } from '../pwa/InstallBanner'
 
 const EMOJIS = ['👍', '❤️', '😂', '🔥', '🍻']
 
@@ -50,6 +53,7 @@ function ActivityRow({ item }: { item: FeedItem }) {
     return { emoji, count: rs.length, mine: rs.some((r) => r.user_id === uid) }
   })
   const react = (emoji: string, mine: boolean) => {
+    haptic()
     toggle.mutate({ activityId: item.id, emoji, active: mine })
     setPicker(false)
   }
@@ -73,7 +77,7 @@ function ActivityRow({ item }: { item: FeedItem }) {
           {counts
             .filter((c) => c.count > 0)
             .map((c) => (
-              <button key={c.emoji} onClick={() => react(c.emoji, c.mine)} className={`${pill} ${c.mine ? 'border-accent text-accent' : 'border-line text-muted'}`}>
+              <button key={c.emoji} onClick={() => react(c.emoji, c.mine)} className={`${pill} ${c.mine ? 'border-accent-text text-accent-text' : 'border-line text-muted'}`}>
                 <span>{c.emoji}</span>
                 {c.count}
               </button>
@@ -116,13 +120,15 @@ export function FeedPage() {
         <Link to="/notifications" aria-label="Értesítések" className="relative -mr-2 flex size-11 shrink-0 items-center justify-center">
           <Bell size={20} strokeWidth={1.75} />
           {unread > 0 && (
-            <span className="absolute top-1.5 right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[11px] font-bold text-white tabular-nums">
+            <span className="absolute top-1.5 right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[11px] font-bold text-on-accent tabular-nums">
               {unread}
             </span>
           )}
         </Link>
       </div>
+      <InstallBanner />
       {modules.map((m) => m.FeedTop && <m.FeedTop key={m.id} />)}
+      {!feed && <SkeletonList rows={4} />}
       {feed?.length === 0 && <EmptyState text="Csend van. Gyanúsan nagy csend." action={<Button onClick={() => setNewProgram(true)}>Szervezek valamit</Button>} />}
       {feed?.map((item) => <ActivityRow key={item.id} item={item} />)}
       <NewProgramSheet open={newProgram} onOpenChange={setNewProgram} />

@@ -1,6 +1,7 @@
 import { ExternalLink } from 'lucide-react'
 import { useSession } from '../../../core/auth/auth'
 import type { SheetProps } from '../../../core/modules'
+import { useMyProfile } from '../../../core/profiles/api'
 import { Button } from '../../../ui/Button'
 import { Card } from '../../../ui/Card'
 import { ListRow } from '../../../ui/ListRow'
@@ -11,7 +12,7 @@ import { presetOf } from '../presets'
 
 export function ItemSheet({ open, onOpenChange, item, presetKey }: SheetProps & { item: ListItem; presetKey: string | null }) {
   const uid = useSession()!.user.id
-  const setMark = useSetMark(item, uid)
+  const setMark = useSetMark(item, uid, useMyProfile().data?.display_name)
   const remove = useDeleteListItem(item.list_id)
   const preset = presetOf(presetKey)
   const mine = item.list_marks.find((m) => m.user_id === uid)

@@ -1,7 +1,10 @@
-import { Check, ChevronLeft, Star } from 'lucide-react'
+import { Check, Star } from 'lucide-react'
 import { useState } from 'react'
 import { useSession } from '../../../core/auth/auth'
 import { useGroup } from '../../../core/groups/GroupProvider'
+import { useMyProfile } from '../../../core/profiles/api'
+import { haptic } from '../../../lib/haptics'
+import { BackLink } from '../../../ui/BackLink'
 import { Button } from '../../../ui/Button'
 import { Card } from '../../../ui/Card'
 import { EmptyState } from '../../../ui/EmptyState'
@@ -12,14 +15,17 @@ import { ItemSheet } from './ItemSheet'
 
 function DoneButton({ item, label }: { item: ListItem; label: string }) {
   const uid = useSession()!.user.id
-  const setMark = useSetMark(item, uid)
+  const setMark = useSetMark(item, uid, useMyProfile().data?.display_name)
   const done = item.list_marks.some((m) => m.user_id === uid)
   return (
     <Button
       variant="secondary"
       aria-pressed={done}
       className={`min-h-9 px-4 text-sm ${done ? 'border-ink' : 'text-muted'}`}
-      onClick={() => setMark.mutate({ done: !done })}
+      onClick={() => {
+        haptic()
+        setMark.mutate({ done: !done })
+      }}
     >
       {done && <Check size={16} strokeWidth={2.25} />}
       {label}
@@ -46,7 +52,7 @@ export function ListDetail({ list, onBack }: { list: List; onBack: () => void })
         {avg !== null && (
           <>
             {' · '}
-            <Star size={14} strokeWidth={1.75} className="fill-accent text-accent" />
+            <Star size={14} strokeWidth={1.75} className="fill-accent-text text-accent-text" />
             {avg.toLocaleString('hu-HU', { maximumFractionDigits: 1 })}
           </>
         )}
@@ -58,9 +64,7 @@ export function ListDetail({ list, onBack }: { list: List; onBack: () => void })
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <button onClick={onBack} className="-ml-1 inline-flex items-center gap-1 text-sm font-semibold text-muted">
-          <ChevronLeft size={20} strokeWidth={1.75} /> Listák
-        </button>
+        <BackLink label="Vissza" onClick={onBack} />
         <h1 className="mt-2 text-3xl font-bold">{list.title}</h1>
       </div>
       <Button onClick={() => setAdding(true)}>Ajánlok valamit</Button>

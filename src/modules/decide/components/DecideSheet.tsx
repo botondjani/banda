@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router'
 import type { SheetProps } from '../../../core/modules'
 import { ListRow } from '../../../ui/ListRow'
 import { Sheet } from '../../../ui/Sheet'
+import { afterOverlayClose } from '../../../ui/useBackClose'
 import { MODES } from '../modes'
 
 export function DecideSheet({ open, onOpenChange }: SheetProps) {
@@ -16,7 +17,7 @@ export function DecideSheet({ open, onOpenChange }: SheetProps) {
           meta={m.meta}
           onClick={() => {
             onOpenChange(false)
-            navigate(`/m/decide?mode=${m.kind}`)
+            afterOverlayClose(() => navigate(`/m/decide?mode=${m.kind}`))
           }}
         />
       ))}

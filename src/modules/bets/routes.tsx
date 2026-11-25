@@ -5,6 +5,7 @@ import { EmptyState } from '../../ui/EmptyState'
 import { useBets } from './api'
 import { BetCard } from './components/BetCard'
 import { NewBetSheet } from './components/NewBetSheet'
+import { SkeletonList } from '../../ui/Skeleton'
 
 export function BetsPage() {
   const { group } = useGroup()
@@ -20,6 +21,7 @@ export function BetsPage() {
         <p className="mt-1 text-muted">Tippelés, lezárás, aztán a banda szavaz, ki nyert.</p>
       </div>
       <Button onClick={() => setOpen(true)}>Fogadjunk</Button>
+      {!bets && <SkeletonList rows={2} avatar={false} />}
       {bets?.length === 0 && <EmptyState text="Még senki nem fogadott semmibe. Gyanúsan óvatos banda." />}
       {live.map((b) => (
         <BetCard key={b.id} bet={b} />

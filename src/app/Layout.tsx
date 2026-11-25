@@ -1,6 +1,7 @@
 import { CalendarDays, CalendarPlus, LayoutGrid, Newspaper, Plus, User } from 'lucide-react'
 import { useState } from 'react'
-import { Navigate, NavLink, Outlet } from 'react-router'
+import { motion } from 'motion/react'
+import { Navigate, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router'
 import { useSession } from '../core/auth/auth'
 import { readPendingJoin } from '../core/groups/active'
 import { GroupProvider } from '../core/groups/GroupProvider'
@@ -8,6 +9,8 @@ import { useEnabledModules } from '../core/modules'
 import { NewProgramSheet } from '../core/programs/NewProgramSheet'
 import { ListRow } from '../ui/ListRow'
 import { Sheet } from '../ui/Sheet'
+import { OfflineBanner } from './OfflineBanner'
+import { Splash } from '../ui/Splash'
 
 const tabs = [
   { to: '/', label: 'Feed', icon: Newspaper },
@@ -18,7 +21,7 @@ const tabs = [
 
 export function Layout() {
   const session = useSession()
-  if (session === undefined) return null
+  if (session === undefined) return <Splash />
   if (!session) return <Navigate to="/login" replace />
   const pendingJoin = readPendingJoin()
   if (pendingJoin) return <Navigate to={`/join/${pendingJoin}`} replace />
@@ -35,6 +38,7 @@ function Shell() {
   // melyik gyorsakció sheetje van nyitva: modul id vagy 'program'
   const [action, setAction] = useState<string | null>(null)
   const actions = useEnabledModules().filter((m) => m.quickAction)
+  const { pathname } = useLocation()
 
   const open = (id: string) => {
     setQuickOpen(false)
@@ -48,28 +52,43 @@ function Shell() {
       to={t.to}
       end={t.to === '/'}
       className={({ isActive }) =>
-        `flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-semibold ${isActive ? 'text-accent' : 'text-muted'}`
+        `flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] ${isActive ? 'font-bold text-ink' : 'font-semibold text-muted'}`
       }
     >
-      <t.icon size={20} strokeWidth={1.75} />
-      {t.label}
+      {({ isActive }) => (
+        <>
+          <span className={`flex h-7 w-12 items-center justify-center rounded-full transition-colors duration-200 ease-out ${isActive ? 'bg-accent text-on-accent' : ''}`}>
+            <t.icon size={20} strokeWidth={isActive ? 2.25 : 1.75} />
+          </span>
+          {t.label}
+        </>
+      )}
     </NavLink>
   )
 
   return (
     <div className="mx-auto min-h-dvh max-w-md">
-      <main className="px-5 pt-6 pb-28">
+      <OfflineBanner />
+      <ScrollRestoration />
+      {/* finom beúszás oldalváltáskor; mozgáscsökkentésnél csak áttűnés (MotionConfig) */}
+      <motion.main
+        key={pathname}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+        className="px-5 pt-[max(1.5rem,calc(env(safe-area-inset-top)+0.75rem))] pb-32"
+      >
         <Outlet />
-      </main>
+      </motion.main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper pb-[env(safe-area-inset-bottom)]">
+      <nav aria-label="Fő navigáció" className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper pb-[env(safe-area-inset-bottom)]">
         <div className="mx-auto flex max-w-md items-center">
           {tabs.slice(0, 2).map(tab)}
           <div className="flex flex-1 justify-center">
             <button
               onClick={() => setQuickOpen(true)}
               aria-label="Gyorsakciók"
-              className="-mt-6 flex size-14 items-center justify-center rounded-full bg-accent text-white shadow-[0_6px_20px_rgba(0,0,0,0.2)] transition-transform duration-150 ease-out active:scale-95"
+              className="-mt-6 flex size-14 items-center justify-center rounded-full bg-accent text-on-accent shadow-[0_6px_20px_rgba(0,0,0,0.2)] transition-transform duration-150 ease-out active:scale-95"
             >
               <Plus size={26} strokeWidth={2.25} />
             </button>

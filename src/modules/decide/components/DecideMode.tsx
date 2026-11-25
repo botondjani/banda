@@ -1,7 +1,7 @@
-import { ChevronLeft } from 'lucide-react'
 import { useState } from 'react'
 import { useMembers } from '../../../core/groups/api'
 import { useGroup } from '../../../core/groups/GroupProvider'
+import { BackLink } from '../../../ui/BackLink'
 import { Button } from '../../../ui/Button'
 import { Chip } from '../../../ui/Chip'
 import { Input } from '../../../ui/Input'
@@ -69,9 +69,7 @@ export function DecideMode({ kind, onBack }: { kind: Kind; onBack: () => void })
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <button onClick={onBack} className="-ml-1 inline-flex items-center gap-1 text-sm font-semibold text-muted">
-          <ChevronLeft size={20} strokeWidth={1.75} /> Döntéssegítő
-        </button>
+        <BackLink label="Vissza" onClick={onBack} />
         <h1 className="mt-2 text-3xl font-bold">{mode.label}</h1>
       </div>
 

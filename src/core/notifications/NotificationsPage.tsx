@@ -1,14 +1,17 @@
-import { ChevronLeft } from 'lucide-react'
 import { useEffect } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
+import { useGoBack } from '../../lib/nav'
+import { BackLink } from '../../ui/BackLink'
 import { timeAgo } from '../../lib/format'
 import { EmptyState } from '../../ui/EmptyState'
 import { useMarkAllRead, useNotifications, type NotificationPayload } from './api'
+import { SkeletonList } from '../../ui/Skeleton'
 
 export function NotificationsPage() {
   const { data: items } = useNotifications()
   const { mutate: markRead } = useMarkAllRead()
   const navigate = useNavigate()
+  const goBack = useGoBack('/')
 
   // elhagyáskor mind olvasott, hogy itt még látszódjon, mi új
   useEffect(() => () => markRead(), [markRead])
@@ -16,11 +19,10 @@ export function NotificationsPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <Link to="/" className="-ml-1 inline-flex items-center gap-1 text-sm font-semibold text-muted">
-          <ChevronLeft size={20} strokeWidth={1.75} /> Feed
-        </Link>
+        <BackLink label="Vissza" onClick={goBack} />
         <h1 className="mt-2 text-3xl font-bold">Értesítések</h1>
       </div>
+      {!items && <SkeletonList rows={4} avatar={false} />}
       {items?.length === 0 && <EmptyState text="Semmi újság. Ami azt illeti, ez is egy újság." />}
       <div>
         {items?.map((n) => {
@@ -31,7 +33,7 @@ export function NotificationsPage() {
               onClick={() => navigate(p.url ?? '/')}
               className="flex w-full items-start gap-3 border-b border-line py-3 text-left last:border-b-0"
             >
-              <span className={`mt-2 size-2 shrink-0 rounded-full ${n.read_at ? 'bg-transparent' : 'bg-accent'}`} />
+              <span className={`mt-2 size-2 shrink-0 rounded-full ${n.read_at ? 'bg-transparent' : 'bg-accent-text'}`} />
               <span className="flex min-w-0 flex-1 flex-col">
                 <span>{p.body}</span>
                 <span className="text-sm text-muted">

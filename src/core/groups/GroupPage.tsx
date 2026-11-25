@@ -1,5 +1,5 @@
-import { ChevronLeft } from 'lucide-react'
-import { Link } from 'react-router'
+import { useGoBack } from '../../lib/nav'
+import { BackLink } from '../../ui/BackLink'
 import { useSession } from '../auth/auth'
 import { useAllModules } from '../modules'
 import { Avatar } from '../../ui/Avatar'
@@ -10,12 +10,14 @@ import { Switch } from '../../ui/Switch'
 import { toast } from '../../ui/Toast'
 import { useGroupModules, useMembers, useResetInvite, useSetModule } from './api'
 import { useGroup } from './GroupProvider'
+import { SkeletonList } from '../../ui/Skeleton'
 
 export function GroupPage() {
   const { group } = useGroup()
   const modules = useAllModules()
+  const goBack = useGoBack('/modules')
   const uid = useSession()?.user.id
-  const { data: members = [] } = useMembers(group.id)
+  const { data: members = [], isPending: membersLoading } = useMembers(group.id)
   const { data: moduleState } = useGroupModules(group.id)
   const setModule = useSetModule(group.id)
   const resetInvite = useResetInvite(group.id)
@@ -34,9 +36,7 @@ export function GroupPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <Link to="/modules" className="-ml-1 inline-flex items-center gap-1 text-sm font-semibold text-muted">
-          <ChevronLeft size={20} strokeWidth={1.75} /> Modulok
-        </Link>
+        <BackLink label="Vissza" onClick={goBack} />
         <h1 className="mt-2 text-3xl font-bold">{group.name}</h1>
       </div>
 
@@ -53,7 +53,8 @@ export function GroupPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-bold">Tagok · {members.length}</h2>
-        <Card className="py-0">
+        {membersLoading && <SkeletonList rows={2} />}
+        <Card className={`py-0 ${membersLoading ? 'hidden' : ''}`}>
           {members.map((m) =>
             m.user ? (
               <ListRow

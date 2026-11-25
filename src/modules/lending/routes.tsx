@@ -11,6 +11,7 @@ import { Sheet } from '../../ui/Sheet'
 import { toast } from '../../ui/Toast'
 import { dueLabel, useAddLendItem, useDeleteLendItem, useLendItems, useRespondLoan, useReturnLoan, type LendItem } from './api'
 import { RequestSheet } from './components/RequestSheet'
+import { SkeletonList } from '../../ui/Skeleton'
 
 const today = () => new Date().toISOString().slice(0, 10)
 const small = 'min-h-9 px-4 text-sm'
@@ -104,6 +105,7 @@ export function LendingPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-bold">Cuccok</h2>
+        {!items && <SkeletonList rows={3} avatar={false} />}
         {items?.length === 0 && <EmptyState text="Senki nem ad kölcsön semmit. Pedig valakinek biztos van sátra." />}
         {items && items.length > 0 && (
           <Card className="py-0">

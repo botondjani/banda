@@ -7,10 +7,12 @@ import { Card } from '../../ui/Card'
 import { EmptyState } from '../../ui/EmptyState'
 import { ListRow } from '../../ui/ListRow'
 import { Segmented } from '../../ui/Segmented'
+import { haptic } from '../../lib/haptics'
 import { toast } from '../../ui/Toast'
 import { useIdeas, useSetThreshold, useThreshold, useVote, type Idea, type Vote } from './api'
 import { NewIdeaSheet } from './components/NewIdeaSheet'
 import { SwipeCard } from './components/SwipeCard'
+import { SkeletonList } from '../../ui/Skeleton'
 
 export function IdeasPage() {
   const { group } = useGroup()
@@ -25,8 +27,10 @@ export function IdeasPage() {
   const myVote = (i: Idea) => i.idea_votes.find((v) => v.user_id === uid)?.vote as Vote | undefined
   const queue = ideas?.filter((i) => !myVote(i)) ?? []
   const top = queue[0]
-  const cast = (ideaId: string, v: Vote) =>
+  const cast = (ideaId: string, v: Vote) => {
+    haptic(v === 'in' ? 14 : 8)
     vote.mutate({ ideaId, vote: v }, { onError: () => toast.error('Nem ment át a szavazat.') })
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -35,6 +39,7 @@ export function IdeasPage() {
         <p className="mt-1 text-muted">{threshold} „benne” kell, és lesz belőle program.</p>
       </div>
 
+      {!ideas && <SkeletonList rows={1} avatar={false} />}
       {top ? (
         <div className="flex flex-col gap-4">
           <div className="relative">

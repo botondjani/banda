@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { patchCache } from '../../lib/optimistic'
 import { supabase } from '../../lib/supabase'
 import { useSession } from '../auth/auth'
 import { emitActivity } from '../feed/api'
@@ -58,11 +59,19 @@ export function useCreateProgram() {
 export function useSetAttendance(programId: string) {
   const qc = useQueryClient()
   const uid = useSession()?.user.id
+  type Program = NonNullable<ReturnType<typeof useProgram>['data']>
   return useMutation({
+    onMutate: async (status: Attendance) => ({
+      rollback: await patchCache<Program>(qc, ['program', programId], (p) => ({
+        ...p,
+        program_attendees: p.program_attendees.map((a) => (a.user?.id === uid ? { ...a, status } : a)),
+      })),
+    }),
+    onError: (_e, _v, ctx) => ctx?.rollback(),
     mutationFn: async (status: Attendance) => {
       const { error } = await supabase.from('program_attendees').upsert({ program_id: programId, user_id: uid, status })
       if (error) throw error
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['program', programId] }),
+    onSettled: () => qc.invalidateQueries({ queryKey: ['program', programId] }),
   })
 }

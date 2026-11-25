@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router'
+import { useGoBack } from '../../lib/nav'
 import { useGroup } from '../../core/groups/GroupProvider'
 import { Button } from '../../ui/Button'
 import { Card } from '../../ui/Card'
@@ -7,20 +8,23 @@ import { Input } from '../../ui/Input'
 import { ListRow } from '../../ui/ListRow'
 import { Sheet } from '../../ui/Sheet'
 import { toast } from '../../ui/Toast'
+import { afterOverlayClose } from '../../ui/useBackClose'
 import { useCreateList, useLists } from './api'
 import { ListDetail } from './components/ListDetail'
 import { presetOf } from './presets'
+import { SkeletonList } from '../../ui/Skeleton'
 
 export function ListsPage() {
   const { group } = useGroup()
-  const { data: lists = [] } = useLists(group.id)
+  const { data: lists = [], isPending } = useLists(group.id)
   const create = useCreateList(group.id)
   const [params, setParams] = useSearchParams()
   const [creating, setCreating] = useState(false)
   const [title, setTitle] = useState('')
   const current = lists.find((l) => l.id === params.get('list'))
 
-  if (current) return <ListDetail key={current.id} list={current} onBack={() => setParams({})} />
+  const goBack = useGoBack('/m/lists')
+  if (current) return <ListDetail key={current.id} list={current} onBack={goBack} />
 
   async function submit(e: FormEvent) {
     e.preventDefault()
@@ -28,7 +32,7 @@ export function ListsPage() {
       const id = await create.mutateAsync(title.trim())
       setTitle('')
       setCreating(false)
-      setParams({ list: id })
+      afterOverlayClose(() => setParams({ list: id }))
     } catch {
       toast.error('Nem sikerült létrehozni.')
     }
@@ -40,7 +44,8 @@ export function ListsPage() {
         <h1 className="text-3xl font-bold">Listák</h1>
         <p className="mt-1 text-muted">Mit nézzünk, hova menjünk, mit olvass végre.</p>
       </div>
-      <Card className="py-0">
+      {isPending && <SkeletonList rows={4} avatar={false} />}
+      {!isPending && <Card className="py-0">
         {lists.map((l) => {
           const Icon = presetOf(l.preset_key).icon
           return (
@@ -53,7 +58,7 @@ export function ListsPage() {
             />
           )
         })}
-      </Card>
+      </Card>}
       <Button variant="secondary" onClick={() => setCreating(true)}>Saját lista</Button>
       <Sheet open={creating} onOpenChange={setCreating} title="Új lista">
         <form onSubmit={submit} className="flex flex-col gap-4">

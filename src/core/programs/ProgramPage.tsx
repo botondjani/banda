@@ -1,5 +1,6 @@
-import { ChevronLeft } from 'lucide-react'
-import { Link, useParams } from 'react-router'
+import { useParams } from 'react-router'
+import { useGoBack } from '../../lib/nav'
+import { BackLink } from '../../ui/BackLink'
 import { formatDateTime } from '../../lib/format'
 import { Avatar } from '../../ui/Avatar'
 import { Card } from '../../ui/Card'
@@ -8,6 +9,7 @@ import { Segmented } from '../../ui/Segmented'
 import { useSession } from '../auth/auth'
 import { useEnabledModules } from '../modules'
 import { useProgram, useSetAttendance, type Attendance } from './api'
+import { Skeleton, SkeletonList } from '../../ui/Skeleton'
 
 const labels: Record<Attendance, string> = { going: 'Megyek', maybe: 'Talán', no: 'Nem' }
 
@@ -16,10 +18,18 @@ export function ProgramPage() {
   const uid = useSession()?.user.id
   const { data: program, isError } = useProgram(id)
   const setAttendance = useSetAttendance(id)
+  const goBack = useGoBack('/programs')
   const sections = useEnabledModules().filter((m) => m.ProgramSection)
 
   if (isError) return <p className="text-muted">Ez a program nem létezik, vagy nem a te bandádé.</p>
-  if (!program) return null
+  if (!program)
+    return (
+      <div className="flex flex-col gap-6">
+        <Skeleton className="h-9 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
+        <SkeletonList rows={2} />
+      </div>
+    )
 
   const mine = program.program_attendees.find((a) => a.user?.id === uid)?.status as Attendance | undefined
   const order: Attendance[] = ['going', 'maybe', 'no']
@@ -28,9 +38,7 @@ export function ProgramPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <Link to="/programs" className="-ml-1 inline-flex items-center gap-1 text-sm font-semibold text-muted">
-          <ChevronLeft size={20} strokeWidth={1.75} /> Programok
-        </Link>
+        <BackLink label="Vissza" onClick={goBack} />
         <h1 className="mt-2 text-3xl font-bold">{program.title}</h1>
         <p className="mt-1 text-muted">
           {[program.starts_at ? formatDateTime(program.starts_at) : 'Időpont még nincs', program.location].filter(Boolean).join(' · ')}

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { Tables } from '../../lib/database.types'
+import { patchCache } from '../../lib/optimistic'
 import { supabase } from '../../lib/supabase'
 
 export type Kind = 'consumable' | 'gear'
@@ -51,14 +52,26 @@ export function useAddItem(programId: string, groupId: string) {
   })
 }
 
-export function useUpdateItem(programId: string) {
+type Patch = { id: string } & Partial<Pick<Tables<'bring_items'>, 'claimed_by' | 'done'>>
+
+export function useUpdateItem(programId: string, me?: { display_name: string; avatar_url: string | null; color: number }) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: async ({ id, ...patch }: { id: string } & Partial<Pick<Tables<'bring_items'>, 'claimed_by' | 'done'>>) => {
+    onMutate: async ({ id, ...patch }: Patch) => ({
+      rollback: await patchCache<BringItem[]>(qc, ['bring', programId], (items) =>
+        items.map((i) => {
+          if (i.id !== id) return i
+          const claimer = 'claimed_by' in patch ? (patch.claimed_by ? (me ?? i.claimer) : null) : i.claimer
+          return { ...i, ...patch, claimer }
+        }),
+      ),
+    }),
+    onError: (_e, _v, ctx) => ctx?.rollback(),
+    mutationFn: async ({ id, ...patch }: Patch) => {
       const { error } = await supabase.from('bring_items').update(patch).eq('id', id)
       if (error) throw error
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['bring', programId] }),
+    onSettled: () => qc.invalidateQueries({ queryKey: ['bring', programId] }),
   })
 }
 

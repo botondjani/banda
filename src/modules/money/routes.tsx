@@ -12,6 +12,7 @@ import { toast } from '../../ui/Toast'
 import { useBalances, useExpenses, useSettle, useSettlePlan } from './api'
 import { ExpenseList } from './components/ExpenseList'
 import { ExpenseSheet } from './components/ExpenseSheet'
+import { SkeletonList } from '../../ui/Skeleton'
 
 export function MoneyPage() {
   const { group } = useGroup()
@@ -91,6 +92,7 @@ export function MoneyPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-bold">Kiadások</h2>
+        {!expenses && <SkeletonList rows={3} avatar={false} />}
         {expenses?.length === 0 && <EmptyState text="Még senki nem fizetett semmit. Vagy csak nem vallotta be." />}
         {expenses && expenses.length > 0 && <ExpenseList expenses={expenses} />}
       </section>
