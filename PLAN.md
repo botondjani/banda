@@ -32,13 +32,13 @@
 
 ---
 
-## 2. Stack (Vercel nélkül)
+## 2. Stack
 
 - **Frontend**: Vite + React + TypeScript (strict), React Router, TanStack Query
 - **UI**: Tailwind CSS v4 + saját komponensek, Radix primitívek (dialog, popover, dropdown), `vaul` (bottom sheet), Lucide ikonok, `motion` (animáció)
 - **PWA**: `vite-plugin-pwa` (manifest, service worker, offline shell)
 - **Backend**: Supabase – Auth, Postgres + RLS, Storage, Realtime, Edge Functions (push, időzített jobok)
-- **Hosting**: Cloudflare Pages (statikus build, ingyenes). Nincs saját szerver.
+- **Hosting**: GitHub Pages (statikus build, ingyenes, Actions deploy). Nincs saját szerver.
 
 Tradeoff: nincs SSR → linkelőnézet (og:image) meghívó linkeknél csak statikus. Zárt appnál ez nem gond.
 
@@ -129,12 +129,12 @@ Alsó tab bar: **Feed · Programok · ＋ · Modulok · Profil**
 
 ## 5. Fázisok
 
-Minden fázis végén: `npm run typecheck && npm run lint && npm run build` zöld, deploy Cloudflare Pagesre, kipróbálás két telefonon.
+Minden fázis végén: `npm run typecheck && npm run lint && npm run build` zöld, deploy GitHub Pagesre, kipróbálás két telefonon.
 
 ### 0. Alapok
 - Vite + TS + Tailwind, design tokenek, fontok, PWA manifest/ikon
 - Supabase projekt, Google + magic link login
-- Cloudflare Pages deploy GitHubról
+- GitHub Pages deploy (Actions)
 - `/dev/ui` oldal: minden UI komponens egy helyen (Button, Card, Sheet, Avatar, Input, ListRow, Tabs, EmptyState, Toast)
 
 ✅ Siker: telefonra telepíthető, belépés megy, `/dev/ui` jól néz ki világos és sötét módban.

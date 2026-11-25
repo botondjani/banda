@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: '/banda/',
   plugins: [
     react(),
     tailwindcss(),
@@ -14,7 +15,6 @@ export default defineConfig({
         name: 'Banda',
         short_name: 'Banda',
         lang: 'hu',
-        start_url: '/',
         display: 'standalone',
         background_color: '#F5F1EA',
         theme_color: '#F5F1EA',

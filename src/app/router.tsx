@@ -20,4 +20,4 @@ if (import.meta.env.DEV) {
   routes.push({ path: '/dev/ui', lazy: async () => ({ Component: (await import('./DevUi')).DevUi }) })
 }
 
-export const router = createBrowserRouter(routes)
+export const router = createBrowserRouter(routes, { basename: import.meta.env.BASE_URL })

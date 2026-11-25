@@ -8,7 +8,7 @@ Teljes terv és fázisok: `PLAN.md`. Mindig az aktuális fázison dolgozz, ne el
 - Tailwind CSS v4, Radix primitívek, `vaul` (bottom sheet), Lucide ikonok, `motion`
 - `vite-plugin-pwa`
 - Supabase: Auth, Postgres + RLS, Storage, Realtime, Edge Functions (Deno)
-- Hosting: Cloudflare Pages (statikus). Nincs Vercel, nincs saját szerver.
+- Hosting: GitHub Pages (statikus, `/banda/` base path), GitHub Actions deploy. Nincs saját szerver.
 
 ## Mappaszerkezet
 ```
