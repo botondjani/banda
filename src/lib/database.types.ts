@@ -77,6 +77,24 @@ export type Database = {
           { foreignKeyName: 'groups_created_by_fkey'; columns: ['created_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
         ]
       }
+      notification_prefs: {
+        Row: { enabled: boolean; type: string; user_id: string }
+        Insert: { enabled: boolean; type: string; user_id?: string }
+        Update: { enabled?: boolean; type?: string; user_id?: string }
+        Relationships: []
+      }
+      notifications: {
+        Row: { created_at: string; group_id: string; id: string; payload: Json; pushed_at: string | null; read_at: string | null; type: string; user_id: string }
+        Insert: { created_at?: string; group_id: string; id?: string; payload?: Json; pushed_at?: string | null; read_at?: string | null; type: string; user_id: string }
+        Update: { created_at?: string; group_id?: string; id?: string; payload?: Json; pushed_at?: string | null; read_at?: string | null; type?: string; user_id?: string }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: { auth: string; created_at: string; endpoint: string; p256dh: string; user_id: string }
+        Insert: { auth: string; created_at?: string; endpoint: string; p256dh: string; user_id: string }
+        Update: { auth?: string; created_at?: string; endpoint?: string; p256dh?: string; user_id?: string }
+        Relationships: []
+      }
       profiles: {
         Row: { avatar_url: string | null; color: number; created_at: string; display_name: string; id: string }
         Insert: { avatar_url?: string | null; color?: number; created_at?: string; display_name: string; id: string }
@@ -150,6 +168,7 @@ export type Database = {
       join_group: { Args: { code: string }; Returns: string }
       program_group: { Args: { pid: string }; Returns: string }
       reset_invite_code: { Args: { gid: string }; Returns: string }
+      save_push_subscription: { Args: { auth: string; endpoint: string; p256dh: string }; Returns: undefined }
       shares_group: { Args: { uid: string }; Returns: boolean }
     }
     Enums: { [_ in never]: never }

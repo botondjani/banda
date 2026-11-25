@@ -21,7 +21,10 @@ export function useFeed(groupId: string) {
   const qc = useQueryClient()
 
   useEffect(() => {
-    const refresh = () => qc.invalidateQueries({ queryKey: ['feed', groupId] })
+    const refresh = () => {
+      qc.invalidateQueries({ queryKey: ['feed', groupId] })
+      qc.invalidateQueries({ queryKey: ['notifications'] }) // a triggerek ugyanabban a tranzakcióban készítik
+    }
     const channel = supabase
       .channel(`feed:${groupId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'activity', filter: `group_id=eq.${groupId}` }, refresh)

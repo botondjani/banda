@@ -12,6 +12,7 @@ import { toast } from '../../ui/Toast'
 import { useSession } from '../auth/auth'
 import { useGroup } from '../groups/GroupProvider'
 import { NewGroupForm } from '../groups/NewGroupForm'
+import { NotificationSettings } from '../notifications/NotificationSettings'
 import { uploadAvatar, useMyProfile, useUpdateProfile } from './api'
 
 export function ProfilePage() {
@@ -107,6 +108,8 @@ export function ProfilePage() {
         </Card>
         <Button variant="secondary" onClick={() => setNewGroup(true)}>Új banda</Button>
       </section>
+
+      <NotificationSettings />
 
       <div className="flex flex-col gap-2">
         <p className="text-sm text-muted">{session.user.email}</p>

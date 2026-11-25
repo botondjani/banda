@@ -1,4 +1,4 @@
-import { MessageCircle, SmilePlus } from 'lucide-react'
+import { Bell, MessageCircle, SmilePlus } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { formatDateTime, timeAgo } from '../../lib/format'
@@ -8,6 +8,7 @@ import { Button } from '../../ui/Button'
 import { useSession } from '../auth/auth'
 import { useGroup } from '../groups/GroupProvider'
 import { useFeed, useToggleReaction, type FeedItem } from './api'
+import { useNotifications } from '../notifications/api'
 import { NewProgramSheet } from '../programs/NewProgramSheet'
 import { CommentsSheet } from './CommentsSheet'
 
@@ -98,10 +99,21 @@ export function FeedPage() {
   const { group } = useGroup()
   const { data: feed } = useFeed(group.id)
   const [newProgram, setNewProgram] = useState(false)
+  const unread = useNotifications().data?.filter((n) => !n.read_at).length ?? 0
 
   return (
     <div className="flex flex-col gap-2">
-      <h1 className="text-3xl font-bold">{group.name}</h1>
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="text-3xl font-bold">{group.name}</h1>
+        <Link to="/notifications" aria-label="Értesítések" className="relative -mr-2 flex size-11 shrink-0 items-center justify-center">
+          <Bell size={20} strokeWidth={1.75} />
+          {unread > 0 && (
+            <span className="absolute top-1.5 right-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[11px] font-bold text-white tabular-nums">
+              {unread}
+            </span>
+          )}
+        </Link>
+      </div>
       {feed?.length === 0 && <EmptyState text="Csend van. Gyanúsan nagy csend." action={<Button onClick={() => setNewProgram(true)}>Szervezek valamit</Button>} />}
       {feed?.map((item) => <ActivityRow key={item.id} item={item} />)}
       <NewProgramSheet open={newProgram} onOpenChange={setNewProgram} />

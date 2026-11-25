@@ -3,6 +3,7 @@ import { LoginPage } from '../core/auth/LoginPage'
 import { FeedPage } from '../core/feed/FeedPage'
 import { GroupPage } from '../core/groups/GroupPage'
 import { JoinPage } from '../core/groups/JoinPage'
+import { NotificationsPage } from '../core/notifications/NotificationsPage'
 import { ProfilePage } from '../core/profiles/ProfilePage'
 import { ProgramPage } from '../core/programs/ProgramPage'
 import { ProgramsPage } from '../core/programs/ProgramsPage'
@@ -21,6 +22,7 @@ const routes: RouteObject[] = [
       { path: 'modules', element: <ModulesPage /> },
       { path: 'group', element: <GroupPage /> },
       { path: 'profile', element: <ProfilePage /> },
+      { path: 'notifications', element: <NotificationsPage /> },
     ],
   },
 ]
