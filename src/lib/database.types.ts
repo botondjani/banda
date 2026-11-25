@@ -258,15 +258,104 @@ export type Database = {
           { foreignKeyName: 'reactions_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
         ]
       }
+      award_categories: {
+        Row: { id: string; group_id: string; title: string; created_by: string; created_at: string }
+        Insert: { id?: string; group_id: string; title: string; created_by?: string; created_at?: string }
+        Update: { id?: string; group_id?: string; title?: string; created_by?: string; created_at?: string }
+        Relationships: []
+      }
+      award_votes: {
+        Row: { category_id: string; group_id: string; month: string; voter_id: string; nominee_id: string; created_at: string }
+        Insert: { category_id: string; group_id: string; month: string; voter_id?: string; nominee_id: string; created_at?: string }
+        Update: { category_id?: string; group_id?: string; month?: string; voter_id?: string; nominee_id?: string; created_at?: string }
+        Relationships: []
+      }
+      badge_rules: {
+        Row: { key: string; label: string; description: string; module_id: string; type: string; threshold: number }
+        Insert: { key: string; label: string; description: string; module_id: string; type: string; threshold: number }
+        Update: { key?: string; label?: string; description?: string; module_id?: string; type?: string; threshold?: number }
+        Relationships: []
+      }
+      bet_picks: {
+        Row: { bet_id: string; user_id: string; group_id: string; side_id: string }
+        Insert: { bet_id: string; user_id?: string; group_id: string; side_id: string }
+        Update: { bet_id?: string; user_id?: string; group_id?: string; side_id?: string }
+        Relationships: [{ foreignKeyName: 'bet_picks_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] }, { foreignKeyName: 'bet_picks_bet_id_fkey'; columns: ['bet_id']; isOneToOne: false; referencedRelation: 'bets'; referencedColumns: ['id'] }]
+      }
+      bet_sides: {
+        Row: { id: string; bet_id: string; group_id: string; label: string }
+        Insert: { id?: string; bet_id: string; group_id: string; label: string }
+        Update: { id?: string; bet_id?: string; group_id?: string; label?: string }
+        Relationships: [{ foreignKeyName: 'bet_sides_bet_id_fkey'; columns: ['bet_id']; isOneToOne: false; referencedRelation: 'bets'; referencedColumns: ['id'] }]
+      }
+      bet_votes: {
+        Row: { bet_id: string; user_id: string; group_id: string; side_id: string }
+        Insert: { bet_id: string; user_id?: string; group_id: string; side_id: string }
+        Update: { bet_id?: string; user_id?: string; group_id?: string; side_id?: string }
+        Relationships: [{ foreignKeyName: 'bet_votes_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] }, { foreignKeyName: 'bet_votes_bet_id_fkey'; columns: ['bet_id']; isOneToOne: false; referencedRelation: 'bets'; referencedColumns: ['id'] }]
+      }
+      bets: {
+        Row: { id: string; group_id: string; title: string; stake: string | null; stake_amount: number | null; to_kassza: boolean; status: string; winning_side: string | null; created_by: string; created_at: string }
+        Insert: { id?: string; group_id: string; title: string; stake?: string | null; stake_amount?: number | null; to_kassza?: boolean; status?: string; winning_side?: string | null; created_by?: string; created_at?: string }
+        Update: { id?: string; group_id?: string; title?: string; stake?: string | null; stake_amount?: number | null; to_kassza?: boolean; status?: string; winning_side?: string | null; created_by?: string; created_at?: string }
+        Relationships: [{ foreignKeyName: 'bets_created_by_fkey'; columns: ['created_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] }]
+      }
+      challenge_submissions: {
+        Row: { id: string; challenge_id: string; group_id: string; user_id: string; photo_path: string; note: string | null; status: string; created_at: string }
+        Insert: { id?: string; challenge_id: string; group_id: string; user_id?: string; photo_path: string; note?: string | null; status?: string; created_at?: string }
+        Update: { id?: string; challenge_id?: string; group_id?: string; user_id?: string; photo_path?: string; note?: string | null; status?: string; created_at?: string }
+        Relationships: [{ foreignKeyName: 'challenge_submissions_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] }, { foreignKeyName: 'challenge_submissions_challenge_id_fkey'; columns: ['challenge_id']; isOneToOne: false; referencedRelation: 'challenges'; referencedColumns: ['id'] }]
+      }
+      challenges: {
+        Row: { id: string; group_id: string; title: string; description: string | null; ends_at: string; created_by: string; created_at: string }
+        Insert: { id?: string; group_id: string; title: string; description?: string | null; ends_at?: string; created_by?: string; created_at?: string }
+        Update: { id?: string; group_id?: string; title?: string; description?: string | null; ends_at?: string; created_by?: string; created_at?: string }
+        Relationships: [{ foreignKeyName: 'challenges_created_by_fkey'; columns: ['created_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] }]
+      }
+      submission_votes: {
+        Row: { submission_id: string; user_id: string; group_id: string; valid: boolean }
+        Insert: { submission_id: string; user_id?: string; group_id: string; valid: boolean }
+        Update: { submission_id?: string; user_id?: string; group_id?: string; valid?: boolean }
+        Relationships: [{ foreignKeyName: 'submission_votes_submission_id_fkey'; columns: ['submission_id']; isOneToOne: false; referencedRelation: 'challenge_submissions'; referencedColumns: ['id'] }]
+      }
+      xp_ledger: {
+        Row: { id: string; user_id: string; group_id: string; activity_id: string; points: number; reason: string; created_at: string }
+        Insert: { id?: string; user_id: string; group_id: string; activity_id: string; points: number; reason: string; created_at?: string }
+        Update: { id?: string; user_id?: string; group_id?: string; activity_id?: string; points?: number; reason?: string; created_at?: string }
+        Relationships: []
+      }
+      xp_rules: {
+        Row: { module_id: string; type: string; points: number; daily_cap: number | null }
+        Insert: { module_id: string; type: string; points: number; daily_cap?: number | null }
+        Update: { module_id?: string; type?: string; points?: number; daily_cap?: number | null }
+        Relationships: []
+      }
     }
     Views: {
       balances: {
         Row: { balance: number; group_id: string; user_id: string }
         Relationships: []
       }
+      award_results: {
+        Row: { category_id: string; group_id: string; month: string; nominee_id: string; votes: number; place: number }
+        Relationships: []
+      }
+      league_standings: {
+        Row: { group_id: string; user_id: string; season_xp: number; total_xp: number }
+        Relationships: []
+      }
+      user_badges: {
+        Row: { group_id: string; user_id: string; key: string; label: string; description: string }
+        Relationships: []
+      }
     }
     Functions: {
       activity_group: { Args: { aid: string }; Returns: string }
+      close_bet: { Args: { bid: string }; Returns: undefined }
+      create_bet: {
+        Args: { gid: string; title: string; sides: string[]; stake?: string | null; stake_amount?: number | null; to_kassza?: boolean }
+        Returns: string
+      }
       add_expense: {
         Args: { amount: number; gid: string; mode: string; paid_by: string; parts: Json; program?: string | null; title: string }
         Returns: string

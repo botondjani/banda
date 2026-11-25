@@ -13,6 +13,7 @@ import { useSession } from '../auth/auth'
 import { useGroup } from '../groups/GroupProvider'
 import { NewGroupForm } from '../groups/NewGroupForm'
 import { NotificationSettings } from '../notifications/NotificationSettings'
+import { XpSummary } from '../xp/XpSummary'
 import { uploadAvatar, useMyProfile, useUpdateProfile } from './api'
 
 export function ProfilePage() {
@@ -68,6 +69,8 @@ export function ProfilePage() {
         </div>
         <input ref={fileInput} type="file" accept="image/*" hidden onChange={(e) => onFile(e.target.files?.[0])} />
       </div>
+
+      <XpSummary />
 
       <form onSubmit={saveName} className="flex flex-col gap-3">
         <Input label="Név" maxLength={40} required value={displayName} onChange={(e) => setName(e.target.value)} />

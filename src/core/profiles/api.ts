@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Tables } from '../../lib/database.types'
+import { compressImage } from '../../lib/image'
 import { supabase } from '../../lib/supabase'
 import { useSession } from '../auth/auth'
 
@@ -30,15 +31,9 @@ export function useUpdateProfile() {
   })
 }
 
-// 256 px-es WebP-re kicsinyít, feltölti, visszaadja a publikus URL-t
+// 256 px-es négyzetes WebP, feltöltés, publikus URL
 export async function uploadAvatar(uid: string, file: File) {
-  const bitmap = await createImageBitmap(file)
-  const size = 256
-  const scale = Math.max(size / bitmap.width, size / bitmap.height)
-  const canvas = document.createElement('canvas')
-  canvas.width = canvas.height = size
-  canvas.getContext('2d')!.drawImage(bitmap, (size - bitmap.width * scale) / 2, (size - bitmap.height * scale) / 2, bitmap.width * scale, bitmap.height * scale)
-  const blob = await new Promise<Blob>((resolve) => canvas.toBlob((b) => resolve(b!), 'image/webp', 0.85))
+  const blob = await compressImage(file, 256, true, 0.85)
   const path = `${uid}/${Date.now()}.webp`
   const { error } = await supabase.storage.from('avatars').upload(path, blob, { contentType: 'image/webp' })
   if (error) throw error
