@@ -12,3 +12,11 @@ export function timeAgo(iso: string) {
   if (s > -86400) return relative.format(Math.round(s / 3600), 'hour')
   return relative.format(Math.round(s / 86400), 'day')
 }
+
+const ft = new Intl.NumberFormat('hu-HU', { maximumFractionDigits: 0 })
+
+// Egész forint; signed: + előjel a pozitívhoz (egyenlegeknél)
+export function formatFt(amount: number, signed = false) {
+  const sign = amount < 0 ? '−' : signed && amount > 0 ? '+' : ''
+  return `${sign}${ft.format(Math.abs(amount))} Ft`
+}

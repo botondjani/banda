@@ -69,6 +69,25 @@ export type Database = {
           { foreignKeyName: 'comments_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
         ]
       }
+      expense_splits: {
+        Row: { amount: number; expense_id: string; user_id: string }
+        Insert: { amount: number; expense_id: string; user_id: string }
+        Update: { amount?: number; expense_id?: string; user_id?: string }
+        Relationships: [
+          { foreignKeyName: 'expense_splits_expense_id_fkey'; columns: ['expense_id']; isOneToOne: false; referencedRelation: 'expenses'; referencedColumns: ['id'] },
+          { foreignKeyName: 'expense_splits_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
+      expenses: {
+        Row: { amount: number; created_at: string; created_by: string; currency: string; group_id: string; id: string; paid_by: string; program_id: string | null; split_mode: string; title: string }
+        Insert: { amount: number; created_at?: string; created_by?: string; currency?: string; group_id: string; id?: string; paid_by: string; program_id?: string | null; split_mode: string; title: string }
+        Update: { amount?: number; created_at?: string; created_by?: string; currency?: string; group_id?: string; id?: string; paid_by?: string; program_id?: string | null; split_mode?: string; title?: string }
+        Relationships: [
+          { foreignKeyName: 'expenses_paid_by_fkey'; columns: ['paid_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+          { foreignKeyName: 'expenses_created_by_fkey'; columns: ['created_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+          { foreignKeyName: 'expenses_program_id_fkey'; columns: ['program_id']; isOneToOne: false; referencedRelation: 'programs'; referencedColumns: ['id'] },
+        ]
+      }
       free_days: {
         Row: { day: string; group_id: string; state: string; user_id: string }
         Insert: { day: string; group_id: string; state: string; user_id?: string }
@@ -183,6 +202,12 @@ export type Database = {
           { foreignKeyName: 'programs_group_id_fkey'; columns: ['group_id']; isOneToOne: false; referencedRelation: 'groups'; referencedColumns: ['id'] },
         ]
       }
+      settlements: {
+        Row: { amount: number; created_at: string; created_by: string; from_user: string; group_id: string; id: string; to_user: string }
+        Insert: { amount: number; created_at?: string; created_by?: string; from_user: string; group_id: string; id?: string; to_user: string }
+        Update: { amount?: number; created_at?: string; created_by?: string; from_user?: string; group_id?: string; id?: string; to_user?: string }
+        Relationships: []
+      }
       reactions: {
         Row: { activity_id: string; emoji: string; user_id: string }
         Insert: { activity_id: string; emoji: string; user_id?: string }
@@ -193,9 +218,18 @@ export type Database = {
         ]
       }
     }
-    Views: { [_ in never]: never }
+    Views: {
+      balances: {
+        Row: { balance: number; group_id: string; user_id: string }
+        Relationships: []
+      }
+    }
     Functions: {
       activity_group: { Args: { aid: string }; Returns: string }
+      add_expense: {
+        Args: { amount: number; gid: string; mode: string; paid_by: string; parts: Json; program?: string | null; title: string }
+        Returns: string
+      }
       create_group: { Args: { group_name: string }; Returns: string }
       is_group_member: { Args: { gid: string }; Returns: boolean }
       is_group_owner: { Args: { gid: string }; Returns: boolean }
@@ -204,6 +238,7 @@ export type Database = {
       program_group: { Args: { pid: string }; Returns: string }
       reset_invite_code: { Args: { gid: string }; Returns: string }
       save_push_subscription: { Args: { auth: string; endpoint: string; p256dh: string }; Returns: undefined }
+      settle_plan: { Args: { gid: string }; Returns: { amount: number; from_user: string; to_user: string }[] }
       shares_group: { Args: { uid: string }; Returns: boolean }
     }
     Enums: { [_ in never]: never }
