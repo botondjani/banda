@@ -6,6 +6,8 @@ import { EmptyState } from '../ui/EmptyState'
 import { Input } from '../ui/Input'
 import { ListRow } from '../ui/ListRow'
 import { Sheet } from '../ui/Sheet'
+import { Segmented } from '../ui/Segmented'
+import { Switch } from '../ui/Switch'
 import { Tabs } from '../ui/Tabs'
 import { toast } from '../ui/Toast'
 
@@ -20,6 +22,8 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 export function DevUi() {
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [on, setOn] = useState(true)
+  const [rsvp, setRsvp] = useState<'going' | 'maybe' | 'no'>('going')
 
   return (
     <main className="mx-auto flex max-w-md flex-col gap-10 px-5 py-8">
@@ -77,6 +81,21 @@ export function DevUi() {
             { value: 'b', label: 'Felszerelés', content: <p className="text-muted">Sátor, főző.</p> },
           ]}
         />
+      </Section>
+
+      <Section title="Segmented">
+        <Segmented
+          options={[{ value: 'going', label: 'Megyek' }, { value: 'maybe', label: 'Talán' }, { value: 'no', label: 'Nem' }]}
+          value={rsvp}
+          onChange={setRsvp}
+        />
+      </Section>
+
+      <Section title="Switch">
+        <Card className="py-0">
+          <ListRow title="Kassza" meta="Ki tartozik kinek" value={<Switch label="Kassza" checked={on} onChange={setOn} />} />
+          <ListRow title="Döntéssegítő" value={<Switch label="Döntéssegítő" checked={!on} onChange={(v) => setOn(!v)} />} />
+        </Card>
       </Section>
 
       <Section title="EmptyState">
