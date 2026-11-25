@@ -49,7 +49,7 @@ export function IdeasPage() {
           {queue.length > 1 && <p className="text-center text-sm text-muted">Még {queue.length - 1} ötlet vár rád.</p>}
         </div>
       ) : (
-        ideas && <EmptyState text="Mindenre szavaztál. Dobj be te is valamit." />
+        ideas && <EmptyState text={ideas.length ? 'Mindenre szavaztál. Dobj be te is valamit.' : 'Üres az ötletbank. Valakinek muszáj kitalálni valamit.'} />
       )}
 
       <Button variant="secondary" onClick={() => setAdding(true)}>Új ötlet</Button>
