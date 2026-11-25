@@ -37,19 +37,24 @@ function Rolling({ final, pool, ms }: { final: string; pool: string[]; ms?: numb
 
 function Coin({ side }: { side: string }) {
   const reduced = useReducedMotion()
+  const [landed, setLanded] = useState(false)
   const turns = 1800 + (side === 'írás' ? 180 : 0)
   const face = 'absolute inset-0 flex items-center justify-center rounded-full font-display text-2xl font-extrabold [backface-visibility:hidden]'
   return (
+    <div className="flex flex-col items-center gap-4">
     <div className="mx-auto size-40 [perspective:600px]">
       <motion.div
         className="relative size-full [transform-style:preserve-3d]"
         initial={{ rotateY: 0 }}
         animate={{ rotateY: turns }}
         transition={{ duration: reduced ? 0 : 1.6, ease: [0.2, 0.7, 0.3, 1] }}
+        onAnimationComplete={() => setLanded(true)}
       >
         <div className={`${face} bg-accent text-white`}>FEJ</div>
         <div className={`${face} bg-ink text-paper [transform:rotateY(180deg)]`}>ÍRÁS</div>
       </motion.div>
+    </div>
+    <p className={`font-display text-4xl font-extrabold transition-opacity duration-200 ${landed ? 'opacity-100' : 'opacity-0'}`}>{side === 'fej' ? 'Fej' : 'Írás'}</p>
     </div>
   )
 }
