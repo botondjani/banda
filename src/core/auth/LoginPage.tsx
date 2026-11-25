@@ -6,6 +6,8 @@ import { Input } from '../../ui/Input'
 import { toast } from '../../ui/Toast'
 import { useSession } from './auth'
 
+const redirectTo = window.location.origin + import.meta.env.BASE_URL
+
 export function LoginPage() {
   const session = useSession()
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
@@ -16,10 +18,7 @@ export function LoginPage() {
   if (session) return <Navigate to="/" replace />
 
   async function google() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin + import.meta.env.BASE_URL },
-    })
+    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } })
     if (error) toast.error(error.message)
   }
 
@@ -29,7 +28,7 @@ export function LoginPage() {
     const { data, error } =
       mode === 'signin'
         ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({ email, password })
+        : await supabase.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo } })
     setBusy(false)
     if (error) return toast.error(error.message)
     if (mode === 'signup' && !data.session) toast.success('Küldtünk egy megerősítő e-mailt.')
