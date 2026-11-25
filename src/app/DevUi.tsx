@@ -6,6 +6,7 @@ import { Chip } from '../ui/Chip'
 import { EmptyState } from '../ui/EmptyState'
 import { Input } from '../ui/Input'
 import { ListRow } from '../ui/ListRow'
+import { Rating } from '../ui/Rating'
 import { Sheet } from '../ui/Sheet'
 import { Segmented } from '../ui/Segmented'
 import { Switch } from '../ui/Switch'
@@ -25,6 +26,7 @@ export function DevUi() {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [on, setOn] = useState(true)
   const [rsvpTag, setRsvpTag] = useState('sör')
+  const [stars, setStars] = useState<number | null>(4)
   const [rsvp, setRsvp] = useState<'going' | 'maybe' | 'no'>('going')
 
   return (
@@ -91,6 +93,11 @@ export function DevUi() {
             <Chip key={t} selected={t === rsvpTag} onClick={() => setRsvpTag(t)}>{t}</Chip>
           ))}
         </div>
+      </Section>
+
+      <Section title="Rating">
+        <Rating value={stars} onChange={setStars} />
+        <Rating value={3} size={16} />
       </Section>
 
       <Section title="Segmented">

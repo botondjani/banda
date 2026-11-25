@@ -129,6 +129,30 @@ export type Database = {
           { foreignKeyName: 'groups_created_by_fkey'; columns: ['created_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
         ]
       }
+      list_items: {
+        Row: { added_by: string; created_at: string; group_id: string; id: string; list_id: string; meta: Json; note: string | null; title: string; url: string | null }
+        Insert: { added_by?: string; created_at?: string; group_id: string; id?: string; list_id: string; meta?: Json; note?: string | null; title: string; url?: string | null }
+        Update: { added_by?: string; created_at?: string; group_id?: string; id?: string; list_id?: string; meta?: Json; note?: string | null; title?: string; url?: string | null }
+        Relationships: [
+          { foreignKeyName: 'list_items_list_id_fkey'; columns: ['list_id']; isOneToOne: false; referencedRelation: 'lists'; referencedColumns: ['id'] },
+          { foreignKeyName: 'list_items_added_by_fkey'; columns: ['added_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
+      list_marks: {
+        Row: { created_at: string; group_id: string; item_id: string; rating: number | null; user_id: string }
+        Insert: { created_at?: string; group_id: string; item_id: string; rating?: number | null; user_id?: string }
+        Update: { created_at?: string; group_id?: string; item_id?: string; rating?: number | null; user_id?: string }
+        Relationships: [
+          { foreignKeyName: 'list_marks_item_id_fkey'; columns: ['item_id']; isOneToOne: false; referencedRelation: 'list_items'; referencedColumns: ['id'] },
+          { foreignKeyName: 'list_marks_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
+      lists: {
+        Row: { created_at: string; created_by: string | null; group_id: string; id: string; kind: string; preset_key: string | null; title: string }
+        Insert: { created_at?: string; created_by?: string | null; group_id: string; id?: string; kind?: string; preset_key?: string | null; title: string }
+        Update: { created_at?: string; created_by?: string | null; group_id?: string; id?: string; kind?: string; preset_key?: string | null; title?: string }
+        Relationships: []
+      }
       notification_prefs: {
         Row: { enabled: boolean; type: string; user_id: string }
         Insert: { enabled: boolean; type: string; user_id?: string }
