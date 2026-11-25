@@ -8,6 +8,7 @@ import { ProfilePage } from '../core/profiles/ProfilePage'
 import { ProgramPage } from '../core/programs/ProgramPage'
 import { ProgramsPage } from '../core/programs/ProgramsPage'
 import { Layout } from './Layout'
+import { ModuleRoute } from './ModuleRoute'
 import { ModulesPage } from './ModulesPage'
 
 const routes: RouteObject[] = [
@@ -20,6 +21,7 @@ const routes: RouteObject[] = [
       { path: 'programs', element: <ProgramsPage /> },
       { path: 'programs/:id', element: <ProgramPage /> },
       { path: 'modules', element: <ModulesPage /> },
+      { path: 'm/:moduleId', element: <ModuleRoute /> },
       { path: 'group', element: <GroupPage /> },
       { path: 'profile', element: <ProfilePage /> },
       { path: 'notifications', element: <NotificationsPage /> },

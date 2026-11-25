@@ -43,6 +43,14 @@ export type Database = {
           { foreignKeyName: 'activity_group_id_fkey'; columns: ['group_id']; isOneToOne: false; referencedRelation: 'groups'; referencedColumns: ['id'] },
         ]
       }
+      availability_pings: {
+        Row: { created_at: string; group_id: string; id: string; note: string | null; program_id: string | null; tag: string; until: string; user_id: string }
+        Insert: { created_at?: string; group_id: string; id?: string; note?: string | null; program_id?: string | null; tag: string; until: string; user_id?: string }
+        Update: { created_at?: string; group_id?: string; id?: string; note?: string | null; program_id?: string | null; tag?: string; until?: string; user_id?: string }
+        Relationships: [
+          { foreignKeyName: 'availability_pings_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
       comments: {
         Row: { activity_id: string; body: string; created_at: string; id: string; user_id: string }
         Insert: { activity_id: string; body: string; created_at?: string; id?: string; user_id?: string }
@@ -50,6 +58,14 @@ export type Database = {
         Relationships: [
           { foreignKeyName: 'comments_activity_id_fkey'; columns: ['activity_id']; isOneToOne: false; referencedRelation: 'activity'; referencedColumns: ['id'] },
           { foreignKeyName: 'comments_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
+      free_days: {
+        Row: { day: string; group_id: string; state: string; user_id: string }
+        Insert: { day: string; group_id: string; state: string; user_id?: string }
+        Update: { day?: string; group_id?: string; state?: string; user_id?: string }
+        Relationships: [
+          { foreignKeyName: 'free_days_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
         ]
       }
       group_members: {
@@ -94,6 +110,15 @@ export type Database = {
         Insert: { auth: string; created_at?: string; endpoint: string; p256dh: string; user_id: string }
         Update: { auth?: string; created_at?: string; endpoint?: string; p256dh?: string; user_id?: string }
         Relationships: []
+      }
+      ping_joins: {
+        Row: { created_at: string; ping_id: string; user_id: string }
+        Insert: { created_at?: string; ping_id: string; user_id: string }
+        Update: { created_at?: string; ping_id?: string; user_id?: string }
+        Relationships: [
+          { foreignKeyName: 'ping_joins_ping_id_fkey'; columns: ['ping_id']; isOneToOne: false; referencedRelation: 'availability_pings'; referencedColumns: ['id'] },
+          { foreignKeyName: 'ping_joins_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
       }
       profiles: {
         Row: { avatar_url: string | null; color: number; created_at: string; display_name: string; id: string }
@@ -166,6 +191,7 @@ export type Database = {
       is_group_member: { Args: { gid: string }; Returns: boolean }
       is_group_owner: { Args: { gid: string }; Returns: boolean }
       join_group: { Args: { code: string }; Returns: string }
+      join_ping: { Args: { pid: string }; Returns: string }
       program_group: { Args: { pid: string }; Returns: string }
       reset_invite_code: { Args: { gid: string }; Returns: string }
       save_push_subscription: { Args: { auth: string; endpoint: string; p256dh: string }; Returns: undefined }

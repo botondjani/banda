@@ -1,7 +1,7 @@
 import { ChevronLeft } from 'lucide-react'
 import { Link } from 'react-router'
-import { modules } from '../../app/modules'
 import { useSession } from '../auth/auth'
+import { useAllModules } from '../modules'
 import { Avatar } from '../../ui/Avatar'
 import { Button } from '../../ui/Button'
 import { Card } from '../../ui/Card'
@@ -13,9 +13,10 @@ import { useGroup } from './GroupProvider'
 
 export function GroupPage() {
   const { group } = useGroup()
+  const modules = useAllModules()
   const uid = useSession()?.user.id
   const { data: members = [] } = useMembers(group.id)
-  const { data: moduleState = {} } = useGroupModules(group.id)
+  const { data: moduleState } = useGroupModules(group.id)
   const setModule = useSetModule(group.id)
   const resetInvite = useResetInvite(group.id)
   const isOwner = members.some((m) => m.user?.id === uid && m.role === 'owner')
@@ -68,7 +69,7 @@ export function GroupPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-bold">Modulok</h2>
-        {modules.length === 0 ? (
+        {!moduleState ? null : modules.length === 0 ? (
           <p className="text-sm text-muted">Még nincs bekapcsolható modul. Jönnek.</p>
         ) : (
           <Card className="py-0">
@@ -77,6 +78,7 @@ export function GroupPage() {
                 key={m.id}
                 leading={<m.icon size={20} strokeWidth={1.75} />}
                 title={m.name}
+                meta={m.description}
                 value={
                   <Switch
                     label={m.name}

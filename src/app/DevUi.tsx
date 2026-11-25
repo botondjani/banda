@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { Avatar, USER_COLORS } from '../ui/Avatar'
 import { Button } from '../ui/Button'
 import { Card } from '../ui/Card'
+import { Chip } from '../ui/Chip'
 import { EmptyState } from '../ui/EmptyState'
 import { Input } from '../ui/Input'
 import { ListRow } from '../ui/ListRow'
@@ -23,6 +24,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 export function DevUi() {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [on, setOn] = useState(true)
+  const [rsvpTag, setRsvpTag] = useState('sör')
   const [rsvp, setRsvp] = useState<'going' | 'maybe' | 'no'>('going')
 
   return (
@@ -81,6 +83,14 @@ export function DevUi() {
             { value: 'b', label: 'Felszerelés', content: <p className="text-muted">Sátor, főző.</p> },
           ]}
         />
+      </Section>
+
+      <Section title="Chip">
+        <div className="flex flex-wrap gap-2">
+          {['sör', 'kaja', 'futás'].map((t) => (
+            <Chip key={t} selected={t === rsvpTag} onClick={() => setRsvpTag(t)}>{t}</Chip>
+          ))}
+        </div>
       </Section>
 
       <Section title="Segmented">

@@ -8,6 +8,7 @@ import { Button } from '../../ui/Button'
 import { useSession } from '../auth/auth'
 import { useGroup } from '../groups/GroupProvider'
 import { useFeed, useToggleReaction, type FeedItem } from './api'
+import { useEnabledModules } from '../modules'
 import { useNotifications } from '../notifications/api'
 import { NewProgramSheet } from '../programs/NewProgramSheet'
 import { CommentsSheet } from './CommentsSheet'
@@ -36,6 +37,7 @@ function describe(item: FeedItem): { text: string; extra?: ReactNode } {
 
 function ActivityRow({ item }: { item: FeedItem }) {
   const { group } = useGroup()
+  const Body = useEnabledModules().find((m) => m.id === item.module_id)?.feed?.[item.type]
   const uid = useSession()?.user.id
   const toggle = useToggleReaction(group.id)
   const [picker, setPicker] = useState(false)
@@ -58,11 +60,15 @@ function ActivityRow({ item }: { item: FeedItem }) {
     <article className="flex gap-3 border-b border-line py-4 last:border-b-0">
       {item.actor && <Avatar name={item.actor.display_name} color={item.actor.color} src={item.actor.avatar_url ?? undefined} />}
       <div className="min-w-0 flex-1">
-        <p>
-          <span className="font-semibold">{item.actor?.display_name}</span> {text}
-        </p>
+        {Body ? (
+          <Body item={item} />
+        ) : (
+          <p>
+            <span className="font-semibold">{item.actor?.display_name}</span> {text}
+          </p>
+        )}
         <p className="text-sm text-muted">{timeAgo(item.created_at)}</p>
-        {extra}
+        {!Body && extra}
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {counts
             .filter((c) => c.count > 0)
@@ -97,7 +103,9 @@ function ActivityRow({ item }: { item: FeedItem }) {
 
 export function FeedPage() {
   const { group } = useGroup()
-  const { data: feed } = useFeed(group.id)
+  const { data } = useFeed(group.id)
+  const modules = useEnabledModules()
+  const feed = data?.filter((i) => i.module_id === 'core' || modules.some((m) => m.id === i.module_id))
   const [newProgram, setNewProgram] = useState(false)
   const unread = useNotifications().data?.filter((n) => !n.read_at).length ?? 0
 
@@ -114,6 +122,7 @@ export function FeedPage() {
           )}
         </Link>
       </div>
+      {modules.map((m) => m.FeedTop && <m.FeedTop key={m.id} />)}
       {feed?.length === 0 && <EmptyState text="Csend van. Gyanúsan nagy csend." action={<Button onClick={() => setNewProgram(true)}>Szervezek valamit</Button>} />}
       {feed?.map((item) => <ActivityRow key={item.id} item={item} />)}
       <NewProgramSheet open={newProgram} onOpenChange={setNewProgram} />

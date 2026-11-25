@@ -7,14 +7,14 @@ import { toast } from '../../ui/Toast'
 import { useGroup } from '../groups/GroupProvider'
 import { useCreateProgram } from './api'
 
-type Props = { open: boolean; onOpenChange: (open: boolean) => void }
+type Props = { open: boolean; onOpenChange: (open: boolean) => void; defaultStartsAt?: string }
 
-export function NewProgramSheet({ open, onOpenChange }: Props) {
+export function NewProgramSheet({ open, onOpenChange, defaultStartsAt = '' }: Props) {
   const { group } = useGroup()
   const create = useCreateProgram()
   const navigate = useNavigate()
   const [title, setTitle] = useState('')
-  const [startsAt, setStartsAt] = useState('')
+  const [startsAt, setStartsAt] = useState(defaultStartsAt)
   const [location, setLocation] = useState('')
 
   async function submit(e: FormEvent) {

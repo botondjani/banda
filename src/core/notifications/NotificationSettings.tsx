@@ -1,4 +1,5 @@
 import { Card } from '../../ui/Card'
+import { useEnabledModules } from '../modules'
 import { ListRow } from '../../ui/ListRow'
 import { Switch } from '../../ui/Switch'
 import { toast } from '../../ui/Toast'
@@ -9,6 +10,7 @@ export function NotificationSettings() {
   const setPush = useSetPush()
   const { data: prefs = {} } = useNotificationPrefs()
   const setPref = useSetNotificationPref()
+  const types = [...NOTIFICATION_TYPES, ...useEnabledModules().flatMap((m) => m.notificationTypes ?? [])]
 
   function togglePush(enabled: boolean) {
     setPush.mutate(enabled, {
@@ -25,7 +27,7 @@ export function NotificationSettings() {
           meta={pushSupported ? 'Akkor is szól, ha nincs nyitva az app' : 'iPhone-on csak a főképernyőre tett appban megy'}
           value={pushSupported ? <Switch label="Push" checked={pushOn} onChange={togglePush} /> : undefined}
         />
-        {NOTIFICATION_TYPES.map((t) => (
+        {types.map((t) => (
           <ListRow
             key={t.type}
             title={t.label}

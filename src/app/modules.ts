@@ -1,10 +1,6 @@
-import type { LucideIcon } from 'lucide-react'
+import type { ModuleManifest } from '../core/modules'
+import { available } from '../modules/available/manifest'
+import { calendar } from '../modules/calendar/manifest'
 
-export type ModuleManifest = {
-  id: string
-  name: string
-  icon: LucideIcon
-}
-
-// A modulok a saját fázisukban kerülnek ide.
-export const modules: ModuleManifest[] = []
+// Sorrend = megjelenési sorrend (Modulok lista, gyorsakciók)
+export const modules: ModuleManifest[] = [available, calendar]
