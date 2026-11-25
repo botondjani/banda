@@ -8,7 +8,9 @@ import { Input } from '../ui/Input'
 import { ListRow } from '../ui/ListRow'
 import { Rating } from '../ui/Rating'
 import { Sheet } from '../ui/Sheet'
+import { BackLink } from '../ui/BackLink'
 import { Segmented } from '../ui/Segmented'
+import { Skeleton, SkeletonList } from '../ui/Skeleton'
 import { Switch } from '../ui/Switch'
 import { Tabs } from '../ui/Tabs'
 import { toast } from '../ui/Toast'
@@ -93,6 +95,15 @@ export function DevUi() {
             <Chip key={t} selected={t === rsvpTag} onClick={() => setRsvpTag(t)}>{t}</Chip>
           ))}
         </div>
+      </Section>
+
+      <Section title="BackLink">
+        <BackLink label="Vissza" onClick={() => toast('Vissza')} />
+      </Section>
+
+      <Section title="Skeleton">
+        <Skeleton className="h-6 w-1/2" />
+        <SkeletonList rows={2} />
       </Section>
 
       <Section title="Rating">

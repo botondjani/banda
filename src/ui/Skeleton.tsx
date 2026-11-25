@@ -1,7 +1,7 @@
 import { Card } from './Card'
 
 export function Skeleton({ className = '' }: { className?: string }) {
-  return <div aria-hidden className={`animate-pulse rounded-md bg-line ${className}`} />
+  return <div aria-hidden className={`animate-pulse bg-line ${className.includes('rounded') ? '' : 'rounded-md'} ${className}`} />
 }
 
 // Betöltés közben a lista-sorok helye (avatar · cím · meta)

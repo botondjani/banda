@@ -52,9 +52,11 @@ Irány: **tinta + papír + egy erős kiemelőszín**. Meleg, kicsit szerkesztős
 | `--ink` | #191714 | #F2EEE7 | fő szöveg |
 | `--muted` | #6E675E | #9A9287 | másodlagos szöveg |
 | `--line` | #E4DDD2 | #2E2B27 | keretek, elválasztók |
-| `--accent` | #FF5B2E | #FF6B42 | CSAK elsődleges akció, aktív állapot |
-| `--positive` | #2F9E62 | #3DB876 | pénz +, érvényes |
-| `--negative` | #D6453D | #E5594F | pénz −, érvénytelen |
+| `--accent` | #FF5B2E | #FF6B42 | CSAK elsődleges akció, aktív állapot (kitöltés) |
+| `--accent-text` | #C83E14 | #FF6B42 | narancs szöveg, ikon, vékony jelölő (AA kontraszt) |
+| `--on-accent` | #191714 | #191714 | szöveg/ikon narancs kitöltésen (fehér nem éri el az AA-t) |
+| `--positive` | #237A4B | #3DB876 | pénz +, érvényes |
+| `--negative` | #C53A32 | #E5594F | pénz −, érvénytelen |
 
 Felhasználói színek (avatar háttér, 8 db, tompított): minden user kap egyet, ez azonosítja a feedben, grafikonokon.
 
@@ -80,6 +82,15 @@ Felhasználói színek (avatar háttér, 8 db, tompított): minden user kap egye
 - emoji ikonként a navigációban vagy címekben
 - „🚀 Welcome to…”, „Unlock your potential” típusú szöveg
 - minden elem középre igazítva, felesleges badge-ek, 3 különböző gombstílus egy képernyőn
+
+### Mobil, akadálymentesség (kötelező)
+- Kontraszt WCAG AA: szöveg ≥ 4.5:1, ikon/jelölő ≥ 3:1. Narancs szövegre `accent-text`, narancs gombra `on-accent`.
+- Betöltés: `SkeletonList`, soha üres képernyő. Gyakori kapcsolók optimistán (`patchCache`).
+- Sheet / teljes képernyős nézet: Android vissza gomb zárja (`useBackClose`, a `Sheet` már tudja); bezárás utáni navigáció `afterOverlayClose`-zal.
+- Fejléc „vissza”: `BackLink` + `useGoBack` (valódi vissza, mélylinknél fallback).
+- Haptika (`haptic()`) csak állapotváltásnál (kapcsoló, szavazás, reakció), nem minden gombon.
+- Ikon-gombnak `aria-label`, érintési felület ≥ 44 px (kis gomb min. 36 px).
+- Ellenőrzés: axe-core WCAG 2.1 AA audit 390 px-en, világos és sötét módban, 0 hiba.
 
 ### UI ellenőrzés
 Minden új komponens kerüljön fel a `/dev/ui` oldalra (csak dev buildben elérhető), és ott nézd meg világos és sötét módban, mielőtt használod.
