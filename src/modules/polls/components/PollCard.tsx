@@ -25,7 +25,7 @@ export function PollCard({ poll, showQuestion = true }: { poll: Poll; showQuesti
   return (
     <div className="flex flex-col gap-2">
       {showQuestion && <p className="font-display text-lg font-bold">{poll.question}</p>}
-      <ul className="flex flex-col gap-2" role="group" aria-label={poll.question}>
+      <ul className="flex flex-col gap-2" aria-label={poll.question}>
         {poll.poll_options.map((o) => {
           const n = poll.poll_votes.filter((v) => v.option_id === o.id).length
           const pct = voters ? Math.round((n / voters) * 100) : 0

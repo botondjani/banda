@@ -19,7 +19,9 @@ export function downloadIcs(ev: Ev, url: string) {
   const a = document.createElement('a')
   a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }))
   a.download = `${ev.title.replace(/[^\p{L}\p{N} -]/gu, '').trim() || 'program'}.ics`
+  document.body.appendChild(a)
   a.click()
+  a.remove()
   setTimeout(() => URL.revokeObjectURL(a.href), 1000)
 }
 

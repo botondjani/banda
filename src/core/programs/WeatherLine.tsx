@@ -20,7 +20,7 @@ export function WeatherLine({ location, startsAt }: { location: string | null; s
     <p className="mt-2 inline-flex items-center gap-2 text-sm text-muted">
       <Icon size={18} strokeWidth={1.75} aria-hidden />
       <span>
-        <span className="font-semibold text-ink tabular-nums">{data.temp}°</span> · {text} · eső {data.rain}% <span className="sr-only">({data.place})</span>
+        <span className="font-semibold text-ink tabular-nums">{data.temp}°</span> · {text} · eső {data.rain}% {data.fallback ? <span>({data.place})</span> : <span className="sr-only">({data.place})</span>}
       </span>
     </p>
   )

@@ -2,7 +2,21 @@ import { useQuery } from '@tanstack/react-query'
 
 // Időjárás az Open-Meteo ingyenes, kulcs nélküli API-jából: a helyszín nevét geokódoljuk,
 // majd a kezdés órájára kérünk előrejelzést (max. 15 napra előre).
-export type Forecast = { temp: number; rain: number; code: number; place: string }
+export type Forecast = { temp: number; rain: number; code: number; place: string; fallback: boolean }
+
+type Hit = { latitude: number; longitude: number; name: string }
+const search = async (name: string): Promise<Hit | undefined> =>
+  (await fetch(`https://geocoding-api.open-meteo.com/v1/search?count=1&language=hu&name=${encodeURIComponent(name)}`).then((r) => r.json())).results?.[0]
+
+// Teljes név, majd a részei (pl. "Kert, Szentendre" -> Szentendre); végül Budapest, jelölve
+async function geocode(location: string): Promise<[Hit | undefined, boolean]> {
+  const parts = [location, ...location.split(/[,·–-]/).map((s) => s.trim()).filter((s) => s.length >= 3).reverse()]
+  for (const p of [...new Set(parts)]) {
+    const hit = await search(p)
+    if (hit) return [hit, false]
+  }
+  return [await search('Budapest'), true]
+}
 
 export function useForecast(location: string | null, startsAt: string | null) {
   const start = startsAt ? new Date(startsAt) : null
@@ -13,8 +27,7 @@ export function useForecast(location: string | null, startsAt: string | null) {
     staleTime: 60 * 60_000,
     retry: false,
     queryFn: async (): Promise<Forecast | null> => {
-      const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?count=1&language=hu&name=${encodeURIComponent(location!)}`).then((r) => r.json())
-      const hit = geo.results?.[0]
+      const [hit, fallback] = await geocode(location!)
       if (!hit) return null
       const day = start!.toISOString().slice(0, 10)
       const res = await fetch(
@@ -23,7 +36,7 @@ export function useForecast(location: string | null, startsAt: string | null) {
       const hour = start!.getUTCHours()
       const h = res.hourly
       if (!h?.time?.[hour]) return null
-      return { temp: Math.round(h.temperature_2m[hour]), rain: h.precipitation_probability[hour] ?? 0, code: h.weather_code[hour], place: hit.name }
+      return { temp: Math.round(h.temperature_2m[hour]), rain: h.precipitation_probability[hour] ?? 0, code: h.weather_code[hour], place: hit.name, fallback }
     },
   })
 }
