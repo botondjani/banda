@@ -11,6 +11,7 @@ export function Segmented<T extends string>({ options, value, onChange }: Props<
       {options.map((o) => (
         <button
           key={o.value}
+          type="button"
           role="radio"
           aria-checked={o.value === value}
           onClick={() => onChange(o.value)}
