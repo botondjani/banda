@@ -339,6 +339,23 @@ export type Database = {
           { foreignKeyName: 'photos_uploaded_by_fkey'; columns: ['uploaded_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
         ]
       }
+      lend_items: {
+        Row: { created_at: string; group_id: string; id: string; name: string; note: string | null; owner_id: string }
+        Insert: { created_at?: string; group_id: string; id?: string; name: string; note?: string | null; owner_id?: string }
+        Update: { created_at?: string; group_id?: string; id?: string; name?: string; note?: string | null; owner_id?: string }
+        Relationships: [
+          { foreignKeyName: 'lend_items_owner_id_fkey'; columns: ['owner_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
+      loans: {
+        Row: { borrower_id: string; created_at: string; due_date: string; group_id: string; id: string; item_id: string; reminded_on: string | null; returned_at: string | null; started_at: string | null; status: string }
+        Insert: { borrower_id: string; created_at?: string; due_date: string; group_id: string; id?: string; item_id: string; reminded_on?: string | null; returned_at?: string | null; started_at?: string | null; status?: string }
+        Update: { borrower_id?: string; created_at?: string; due_date?: string; group_id?: string; id?: string; item_id?: string; reminded_on?: string | null; returned_at?: string | null; started_at?: string | null; status?: string }
+        Relationships: [
+          { foreignKeyName: 'loans_item_id_fkey'; columns: ['item_id']; isOneToOne: false; referencedRelation: 'lend_items'; referencedColumns: ['id'] },
+          { foreignKeyName: 'loans_borrower_id_fkey'; columns: ['borrower_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
     }
     Views: {
       balances: {
@@ -380,6 +397,9 @@ export type Database = {
       reset_invite_code: { Args: { gid: string }; Returns: string }
       save_push_subscription: { Args: { auth: string; endpoint: string; p256dh: string }; Returns: undefined }
       settle_plan: { Args: { gid: string }; Returns: { amount: number; from_user: string; to_user: string }[] }
+      request_loan: { Args: { iid: string; due: string }; Returns: string }
+      respond_loan: { Args: { lid: string; approve: boolean }; Returns: undefined }
+      return_loan: { Args: { lid: string }; Returns: undefined }
       shares_group: { Args: { uid: string }; Returns: boolean }
       wrapped: { Args: { gid: string; yr: number }; Returns: Json }
     }
