@@ -129,6 +129,15 @@ export type Database = {
           { foreignKeyName: 'groups_created_by_fkey'; columns: ['created_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
         ]
       }
+      idea_votes: {
+        Row: { created_at: string; group_id: string; program_id: string; user_id: string; vote: string }
+        Insert: { created_at?: string; group_id: string; program_id: string; user_id?: string; vote: string }
+        Update: { created_at?: string; group_id?: string; program_id?: string; user_id?: string; vote?: string }
+        Relationships: [
+          { foreignKeyName: 'idea_votes_program_id_fkey'; columns: ['program_id']; isOneToOne: false; referencedRelation: 'programs'; referencedColumns: ['id'] },
+          { foreignKeyName: 'idea_votes_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
       list_items: {
         Row: { added_by: string; created_at: string; group_id: string; id: string; list_id: string; meta: Json; note: string | null; title: string; url: string | null }
         Insert: { added_by?: string; created_at?: string; group_id: string; id?: string; list_id: string; meta?: Json; note?: string | null; title: string; url?: string | null }
@@ -264,6 +273,7 @@ export type Database = {
       }
       create_group: { Args: { group_name: string }; Returns: string }
       draw: { Args: { gid: string; kind: string; options?: Json }; Returns: string }
+      idea_threshold: { Args: { gid: string }; Returns: number }
       is_group_member: { Args: { gid: string }; Returns: boolean }
       is_group_owner: { Args: { gid: string }; Returns: boolean }
       join_group: { Args: { code: string }; Returns: string }
