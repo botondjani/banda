@@ -14,6 +14,7 @@ import { useGroup } from '../groups/GroupProvider'
 import { NewGroupForm } from '../groups/NewGroupForm'
 import { NotificationSettings } from '../notifications/NotificationSettings'
 import { XpSummary } from '../xp/XpSummary'
+import { PaymentDetails } from './PaymentDetails'
 import { uploadAvatar, useMyProfile, useUpdateProfile } from './api'
 import { SkeletonList } from '../../ui/Skeleton'
 
@@ -112,6 +113,8 @@ export function ProfilePage() {
         </Card>
         <Button variant="secondary" onClick={() => setNewGroup(true)}>Új banda</Button>
       </section>
+
+      <PaymentDetails key={profile.id} profile={profile} />
 
       <NotificationSettings />
 

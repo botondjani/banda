@@ -23,7 +23,7 @@ export function useUpdateProfile() {
   const qc = useQueryClient()
   const uid = useSession()?.user.id
   return useMutation({
-    mutationFn: async (patch: Partial<Pick<Profile, 'display_name' | 'color' | 'avatar_url'>>) => {
+    mutationFn: async (patch: Partial<Pick<Profile, 'display_name' | 'color' | 'avatar_url' | 'bank_account' | 'revolut'>>) => {
       const { error } = await supabase.from('profiles').update(patch).eq('id', uid!)
       if (error) throw error
     },

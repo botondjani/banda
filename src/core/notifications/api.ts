@@ -6,6 +6,8 @@ export const NOTIFICATION_TYPES = [
   { type: 'program_created', label: 'Új program' },
   { type: 'member_joined', label: 'Új tag a bandában' },
   { type: 'comment', label: 'Komment a bejegyzésedre' },
+  { type: 'program_reminder', label: 'Program-emlékeztető (előző este, 2 órával előtte)' },
+  { type: 'program_comment', label: 'Üzenet egy programodnál' },
 ] as const
 
 export type NotificationPayload = { title?: string; body?: string; url?: string }

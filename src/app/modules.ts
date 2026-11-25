@@ -10,7 +10,8 @@ import { league } from '../modules/league/manifest'
 import { lending } from '../modules/lending/manifest'
 import { lists } from '../modules/lists/manifest'
 import { memories } from '../modules/memories/manifest'
+import { polls } from '../modules/polls/manifest'
 import { money } from '../modules/money/manifest'
 
 // Sorrend = megjelenési sorrend (Modulok lista, gyorsakciók)
-export const modules: ModuleManifest[] = [available, money, decide, ideas, calendar, bring, lists, challenges, bets, league, memories, lending]
+export const modules: ModuleManifest[] = [available, money, polls, decide, ideas, calendar, bring, lists, challenges, bets, league, memories, lending]

@@ -8,10 +8,14 @@ import { ListRow } from '../../ui/ListRow'
 import { Segmented } from '../../ui/Segmented'
 import { useSession } from '../auth/auth'
 import { useEnabledModules } from '../modules'
-import { useProgram, useSetAttendance, type Attendance } from './api'
+import { useProgram, useSetAttendance, useStopRecurrence, type Attendance } from './api'
+import { ProgramActions } from './ProgramActions'
+import { ProgramComments } from './ProgramComments'
+import { WeatherLine } from './WeatherLine'
 import { Skeleton, SkeletonList } from '../../ui/Skeleton'
 
 const labels: Record<Attendance, string> = { going: 'Megyek', maybe: 'Talán', no: 'Nem' }
+const RECURRENCE: Record<string, string> = { weekly: 'Hetente', biweekly: 'Kéthetente', monthly: 'Havonta' }
 
 export function ProgramPage() {
   const { id = '' } = useParams()
@@ -19,6 +23,7 @@ export function ProgramPage() {
   const { data: program, isError } = useProgram(id)
   const setAttendance = useSetAttendance(id)
   const goBack = useGoBack('/programs')
+  const stopRecurrence = useStopRecurrence(id)
   const sections = useEnabledModules().filter((m) => m.ProgramSection)
 
   if (isError) return <p className="text-muted">Ez a program nem létezik, vagy nem a te bandádé.</p>
@@ -43,7 +48,20 @@ export function ProgramPage() {
         <p className="mt-1 text-muted">
           {[program.starts_at ? formatDateTime(program.starts_at) : 'Időpont még nincs', program.location].filter(Boolean).join(' · ')}
         </p>
+        <WeatherLine location={program.location} startsAt={program.starts_at} />
+        {program.recurrence && (
+          <p className="mt-2 flex items-center gap-3 text-sm text-muted">
+            <span>{RECURRENCE[program.recurrence]} ismétlődik</span>
+            {program.created_by === uid && program.series_id && (
+              <button className="min-h-11 font-semibold text-ink underline underline-offset-4" onClick={() => stopRecurrence.mutate(program.series_id!)}>
+                Leállítom
+              </button>
+            )}
+          </p>
+        )}
       </div>
+
+      <ProgramActions program={program} />
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-bold">Jössz?</h2>
@@ -69,6 +87,8 @@ export function ProgramPage() {
           )}
         </Card>
       </section>
+
+      <ProgramComments programId={program.id} groupId={program.group_id} />
 
       {sections.map(({ id: moduleId, ProgramSection }) => ProgramSection && <ProgramSection key={moduleId} programId={program.id} />)}
     </div>

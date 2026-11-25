@@ -190,9 +190,9 @@ export type Database = {
         ]
       }
       profiles: {
-        Row: { avatar_url: string | null; color: number; created_at: string; display_name: string; id: string }
+        Row: { avatar_url: string | null; bank_account: string | null; color: number; created_at: string; display_name: string; id: string; revolut: string | null }
         Insert: { avatar_url?: string | null; color?: number; created_at?: string; display_name: string; id: string }
-        Update: { avatar_url?: string | null; color?: number; created_at?: string; display_name?: string; id?: string }
+        Update: { avatar_url?: string | null; bank_account?: string | null; color?: number; created_at?: string; display_name?: string; id?: string; revolut?: string | null }
         Relationships: []
       }
       program_attendees: {
@@ -215,6 +215,10 @@ export type Database = {
           starts_at: string | null
           status: string
           title: string
+          recurrence: string | null
+          series_id: string | null
+          reminded_eve: boolean
+          reminded_soon: boolean
         }
         Insert: {
           created_at?: string
@@ -226,6 +230,8 @@ export type Database = {
           starts_at?: string | null
           status?: string
           title: string
+          recurrence?: string | null
+          series_id?: string | null
         }
         Update: {
           created_at?: string
@@ -237,6 +243,8 @@ export type Database = {
           starts_at?: string | null
           status?: string
           title?: string
+          recurrence?: string | null
+          series_id?: string | null
         }
         Relationships: [
           { foreignKeyName: 'programs_created_by_fkey'; columns: ['created_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
@@ -356,6 +364,41 @@ export type Database = {
           { foreignKeyName: 'loans_borrower_id_fkey'; columns: ['borrower_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
         ]
       }
+      program_comments: {
+        Row: { body: string; created_at: string; group_id: string; id: string; program_id: string; user_id: string }
+        Insert: { body: string; created_at?: string; group_id: string; id?: string; program_id: string; user_id?: string }
+        Update: { body?: string; created_at?: string; group_id?: string; id?: string; program_id?: string; user_id?: string }
+        Relationships: [
+          { foreignKeyName: 'program_comments_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+          { foreignKeyName: 'program_comments_program_id_fkey'; columns: ['program_id']; isOneToOne: false; referencedRelation: 'programs'; referencedColumns: ['id'] },
+        ]
+      }
+      polls: {
+        Row: { closes_at: string | null; created_at: string; created_by: string; group_id: string; id: string; multi: boolean; question: string }
+        Insert: { closes_at?: string | null; created_at?: string; created_by?: string; group_id: string; id?: string; multi?: boolean; question: string }
+        Update: { closes_at?: string | null; created_at?: string; created_by?: string; group_id?: string; id?: string; multi?: boolean; question?: string }
+        Relationships: [
+          { foreignKeyName: 'polls_created_by_fkey'; columns: ['created_by']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
+      poll_options: {
+        Row: { group_id: string; id: string; label: string; poll_id: string; position: number }
+        Insert: { group_id: string; id?: string; label: string; poll_id: string; position: number }
+        Update: { group_id?: string; id?: string; label?: string; poll_id?: string; position?: number }
+        Relationships: [
+          { foreignKeyName: 'poll_options_poll_id_fkey'; columns: ['poll_id']; isOneToOne: false; referencedRelation: 'polls'; referencedColumns: ['id'] },
+        ]
+      }
+      poll_votes: {
+        Row: { created_at: string; group_id: string; option_id: string; poll_id: string; user_id: string }
+        Insert: { created_at?: string; group_id: string; option_id: string; poll_id: string; user_id?: string }
+        Update: { created_at?: string; group_id?: string; option_id?: string; poll_id?: string; user_id?: string }
+        Relationships: [
+          { foreignKeyName: 'poll_votes_poll_id_fkey'; columns: ['poll_id']; isOneToOne: false; referencedRelation: 'polls'; referencedColumns: ['id'] },
+          { foreignKeyName: 'poll_votes_option_id_fkey'; columns: ['option_id']; isOneToOne: false; referencedRelation: 'poll_options'; referencedColumns: ['id'] },
+          { foreignKeyName: 'poll_votes_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+        ]
+      }
     }
     Views: {
       balances: {
@@ -401,6 +444,8 @@ export type Database = {
       respond_loan: { Args: { lid: string; approve: boolean }; Returns: undefined }
       return_loan: { Args: { lid: string }; Returns: undefined }
       shares_group: { Args: { uid: string }; Returns: boolean }
+      create_poll: { Args: { gid: string; question: string; options: string[]; multi?: boolean; closes_at?: string | null }; Returns: string }
+      vote_poll: { Args: { pid: string; option_ids: string[] }; Returns: undefined }
       wrapped: { Args: { gid: string; yr: number }; Returns: Json }
     }
     Enums: { [_ in never]: never }

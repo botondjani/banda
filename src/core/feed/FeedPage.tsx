@@ -15,6 +15,7 @@ import { NewProgramSheet } from '../programs/NewProgramSheet'
 import { CommentsSheet } from './CommentsSheet'
 import { SkeletonList } from '../../ui/Skeleton'
 import { InstallBanner } from '../pwa/InstallBanner'
+import { GettingStarted } from './GettingStarted'
 
 const EMOJIS = ['👍', '❤️', '😂', '🔥', '🍻']
 
@@ -126,6 +127,7 @@ export function FeedPage() {
           )}
         </Link>
       </div>
+      <GettingStarted />
       <InstallBanner />
       {modules.map((m) => m.FeedTop && <m.FeedTop key={m.id} />)}
       {!feed && <SkeletonList rows={4} />}

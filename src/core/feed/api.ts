@@ -29,6 +29,7 @@ export function useFeed(groupId: string) {
       .channel(`feed:${groupId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'activity', filter: `group_id=eq.${groupId}` }, refresh)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'reactions' }, refresh)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'poll_votes' }, refresh)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, (p) => {
         refresh()
         const row = (p.new ?? p.old) as { activity_id?: string }

@@ -12,6 +12,7 @@ import { toast } from '../../ui/Toast'
 import { useBalances, useExpenses, useSettle, useSettlePlan } from './api'
 import { ExpenseList } from './components/ExpenseList'
 import { ExpenseSheet } from './components/ExpenseSheet'
+import { PaymentSheet } from './components/PaymentSheet'
 import { SkeletonList } from '../../ui/Skeleton'
 
 export function MoneyPage() {
@@ -23,6 +24,7 @@ export function MoneyPage() {
   const { data: expenses } = useExpenses(group.id)
   const settle = useSettle(group.id, uid)
   const [adding, setAdding] = useState(false)
+  const [paying, setPaying] = useState<{ from_user: string; to_user: string; amount: number } | null>(null)
   const name = (id: string) => members.find((m) => m.user?.id === id)?.user?.display_name ?? '?'
   const mine = balances[uid] ?? 0
 
@@ -77,9 +79,13 @@ export function MoneyPage() {
                         variant="secondary"
                         className="min-h-9 px-4 text-sm"
                         disabled={settle.isPending}
-                        onClick={() => settle.mutate({ from: t.from_user, to: t.to_user, amount: t.amount }, { onError: () => toast.error('Nem ment.') })}
+                        onClick={() =>
+                          uid === t.from_user
+                            ? setPaying(t)
+                            : settle.mutate({ from: t.from_user, to: t.to_user, amount: t.amount }, { onError: () => toast.error('Nem ment.') })
+                        }
                       >
-                        {uid === t.from_user ? 'Kifizettem' : 'Megkaptam'}
+                        {uid === t.from_user ? 'Utalás' : 'Megkaptam'}
                       </Button>
                     )
                   }
@@ -98,6 +104,17 @@ export function MoneyPage() {
       </section>
 
       <ExpenseSheet open={adding} onOpenChange={setAdding} />
+      {paying && (
+        <PaymentSheet
+          open
+          onOpenChange={(o) => !o && setPaying(null)}
+          to={paying.to_user}
+          toName={name(paying.to_user)}
+          amount={paying.amount}
+          groupName={group.name}
+          onPaid={() => settle.mutate({ from: paying.from_user, to: paying.to_user, amount: paying.amount }, { onError: () => toast.error('Nem ment.') })}
+        />
+      )}
     </div>
   )
 }
